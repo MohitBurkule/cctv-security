@@ -1,0 +1,33 @@
+runner: alarm_budget_scale
+seed: 70
+hypothesis: 'H70 (pre-registered in 32): on a simulated 40-site / 400-camera estate served by one wall of K
+  operators, a global budget re-allocated by load-aware per-site theta (c) beats one pooled theta (a) on
+  operator-realised intrusion recall@300 s by >= 0.05 at K = 2, keeps every non-drift site <= 2B in >= 90 % of
+  worlds, and notices a x3 FA drift at one site within 24 h in >= 90 % of worlds. Every rate is a declared assumption.'
+n_worlds: 30
+sites: 40
+cams_per_site: 10
+week_h: 168
+budget: 0.5
+cand_per_cam_h: 20.0
+bg_mu: -2.0
+bg_sd: 1.0
+sigma_delta: 0.3
+sigma_delta_sensitivity: 0.6
+intr_per_site_week: 1.0
+p_detect: 0.775          # H63 arm C recall@10
+intr_mu: 1.5
+intr_sd: 1.0
+drift_x: 3.0
+drift_hour: 84
+monitor_p: 0.001
+horizon_s: 300.0
+K: [2, 3]
+operator:   # H22 values, fatigue omitted
+  review_s: 30.0
+  review_cv: 0.3
+  miss: 0.05
+  bulk_ack_per_op: 10
+n_boot: 2000
+workers: 6
+figure: docs/research/figures/h70_budget_scale.png

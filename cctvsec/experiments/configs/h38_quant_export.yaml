@@ -1,0 +1,33 @@
+runner: quant_export
+seed: 38
+hypothesis: 'H38 (docs/research/66, pre-registered in 32): exporting the h14b mixed-data YOLOv8n to ONNX FP16
+  loses <= 0.005 MOT20-02 AP@640 and to INT8 (static PTQ, 100 real MOT20-01 calibration frames) <= 0.015, on
+  each of 3 checkpoints; calibrating INT8 on synthetic batch_v8 frames loses >= 0.01 more. CPU / onnxruntime;
+  latency is CPU context, not a Jetson number.'
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+eval_sets:
+  mot20_02:
+  - MOT20-02
+eval_imgsz: 640
+input_shape: [384, 640]   # ultralytics rect letterbox of 1920x1080 at 640
+checkpoints: [mix_300_s0, mix_300_s1, mix_300_s2]
+checkpoint_glob: out/experiments/h14b_dose_fixedlabels/work/{name}/train/weights/last.pt
+calibration:
+  real:
+    dir: ~/data/mot/extracted/MOT20/train/MOT20-01/img1
+    first: 61      # MOT20-01 1-60 are h14b training frames
+    last: 429
+    n: 100
+  syn:
+    batch_dir: out/batch_v8
+    subdirs: [render, video/degraded]
+    n: 100
+    seed: 38
+thresholds:
+  sanity: 0.001
+  fp16: 0.005
+  int8: 0.015
+  calib_gap: 0.01
+latency:
+  n: 50
+  warmup: 5

@@ -1,0 +1,33 @@
+runner: h46_reid_w_sweep
+hypothesis: 'H46: best of w in {0.25,0.5,1,2,4} for OSNet-ImageNet ByteTrack association gives
+  batch_v8 day dAssA >= 0.02 (CI>0) with no MOT20-02 decrease and matching argmax w; batch_v8
+  night at that w still helps (CI>0) but less than day. Pre-registered docs/research/32 sec H46.'
+seed: 0
+mot20_subset: $SURVSIM_MOT20_SUBSET
+mot20_sequences: [MOT20-02]
+batch_dir: out/batch_v8
+day_runs: [street_crowd_day, street_crowd_far_day, smoke_mock_day, disguise_and_tamper_day]
+night_runs: [disguise_and_tamper_night, smoke_mock_night]
+max_frame: 300
+batch_fps: 10
+imgsz: 640
+det_conf: 0.1
+det_batch: 4
+emb_min_score: 0.5
+embed_batch: 32
+ema: 0.9
+min_free_mib: 2048
+weights: [0.25, 0.5, 1.0, 2.0, 4.0]
+checkpoints: [mix_300_s0, mix_300_s1, mix_300_s2, mix_300_s3, mix_300_s4]
+night_checkpoints: [mix_300_s0]
+checkpoint_specs:
+- name: mix_300_s0
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt
+- name: mix_300_s1
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/train/weights/last.pt
+- name: mix_300_s2
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/train/weights/last.pt
+- name: mix_300_s3
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s3/train/weights/last.pt
+- name: mix_300_s4
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s4/train/weights/last.pt

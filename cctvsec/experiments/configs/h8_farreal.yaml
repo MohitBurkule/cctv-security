@@ -1,0 +1,31 @@
+runner: farreal
+hypothesis: >
+  H8 (far-field on real pixels). Fine-tuning YOLOv8n at imgsz 1280 on
+  SurvSim's far-camera renders (median person 16-22 px) raises recall and AP50
+  on real MOT20-02 people shrunk below 60 px, over zero-shot and over the H1
+  general-synthetic weights, with and without SAHI-style tiling.
+seed: 0
+base_model: yolov8n.pt
+batch_dir: out/batch_v6
+mot20_root: ~/data/mot/extracted/MOT20
+synthetic_train_runs: [street_crowd_far_day, street_crowd_far_night]
+synthetic_val_runs: [smoke_mock_day]
+val_sources: [{source: raw, stride: 50, phase: 0}]
+train: {epochs: 8, imgsz: 1280, batch: 2, seed: 0, workers: 2}
+eval_sequence: MOT20-02
+eval_frames: 300
+eval_stride: 5
+scales: [0.25, 0.33]
+max_h: 60
+bands: [[0, 30], [30, 45], [45, 60]]
+det_conf: 0.01
+op_conf: 0.25
+methods:
+  - {name: full_native, imgsz: native}
+  - {name: sahi_320x240, imgsz: native, tile: [320, 240], overlap: 0.2, tile_imgsz: 640}
+arms:
+  - {name: zero_shot, description: COCO yolov8n}
+  - {name: h1_synthetic, description: H1 synthetic-only weights (seed 0), weights: out/experiments/h1_sim2real/work/synthetic/train/weights/last.pt}
+  - name: far_ft
+    description: far cameras cam_02/cam_03 of street_crowd_far day+night, raw every 3rd + day degraded every 3rd, 8 epochs, imgsz 1280
+    train: {synthetic: [{source: raw, stride: 3, phase: 0, cameras: [cam_02, cam_03]}, {source: degraded, stride: 3, phase: 1, cameras: [cam_02, cam_03]}]}

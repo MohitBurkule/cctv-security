@@ -1,0 +1,30 @@
+runner: diagnose
+hypothesis: >
+  H6c/d (why synthetic hurts: labels or pixels). (c) If SurvSim GT boxes were
+  loose or offset, their IoU with a zero-shot COCO detector's boxes would be
+  clearly lower than MOT20's hand-labelled boxes, with a biased edge offset.
+  (d) If pixel statistics drove transfer, the training set closest to MOT20 in
+  docs/15 image statistics would have the highest real AP.
+seed: 0
+model: yolov8n.pt
+batch_dir: out/batch_v6
+mot20_root: ~/data/mot/extracted/MOT20
+label_quality:
+  synthetic_runs: [disguise_and_tamper_day, disguise_and_tamper_night, street_crowd_day, street_crowd_night]
+  synthetic_sources: [raw, degraded]
+  real_sequences: [MOT20-02]
+  n_frames: 30
+  n_overlays: 30
+  min_h: 40      # below this a YOLO miss, not a loose box, dominates the IoU
+  min_vis: 0.7
+  conf: 0.1
+image_stats:
+  reference: MOT20-02
+  n_frames: 40
+  synthetic_runs: [disguise_and_tamper_day, disguise_and_tamper_night, street_crowd_day,
+                   street_crowd_night, street_crowd_far_day]
+  sets:
+    raw: {sources: [raw], ap_from: [out/experiments/h2_degradation/results.json, raw_only, mot20_sub@640]}
+    degraded: {sources: [degraded], ap_from: [out/experiments/h2_degradation/results.json, degraded_only, mot20_sub@640]}
+    raw_plus_degraded: {sources: [raw, degraded], ap_from: [out/experiments/h1_sim2real/results.json, synthetic, mot20_sub@640]}
+    real_mot20_01_60: {real: MOT20-01, ap_from: [out/experiments/h1_sim2real/results.json, real10_only, mot20_02@640]}

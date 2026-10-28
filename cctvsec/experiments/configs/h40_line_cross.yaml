@@ -1,0 +1,32 @@
+runner: line_cross
+seed: 40
+hypothesis: 'H40 (docs/research/66, pre-registered in 32): on the H12 clean worlds a naive sterile-zone
+  line-cross rule is >= 10x over the 0.001 FA/cam-h budget; gating + direction/dwell + gate context cuts
+  FA >= 5x with recall@10 s >= 0.9 on intrusion / perimeter-probe worlds.'
+clean_dir: out/experiments/h58_round2/tracks/h12
+n_clean: 676
+sterile_tags: [restricted, perimeter_fence]
+context_tags: [gate, queue]
+recall:
+  n_intrusion: 100
+  n_probe: 100
+  duration_s: 300
+noise:
+  jitter_m: 0.30
+  frag_rate_per_s: 0.011111
+  height_mu: 1.70
+  height_sd: 0.09
+  height_tick_sd: 0.15
+  ghost_per_cam_h: 10.0
+  ghost_dur_s: [0.4, 4.0]
+  ghost_speed: [0.0, 1.5]
+  ghost_wildlife_p: 0.5
+arms:
+  A: {min_age_s: 2.0, min_height_m: 1.2}
+  B: {min_depth_m: 1.5, min_dwell_s: 5.0}
+  C: {context_m: 4.0}
+tolerances_s: [10, 30]
+budget_fa_per_cam_h: 0.001
+n_boot: 2000
+thresholds: {naive_x_budget: 10, fa_ratio: 5, recall: 0.9}
+workers: 10

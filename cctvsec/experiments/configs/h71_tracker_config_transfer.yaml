@@ -1,0 +1,32 @@
+runner: tracker_config_transfer
+hypothesis: 'H71: the full ByteTrack configuration (w, IoU gate, track buffer, detection-confidence
+  split) ranks the same on CC0 renders as on real MOT20: Spearman rho >= 0.6 with 95% CI excluding 0,
+  and regret of the render-best config on real <= 0.02 HOTA; hard negative: the det-conf split
+  (high) does not transfer. Pre-registered docs/research/32 sec H71.'
+seed: 0
+batch_dir: out/batch_v8
+day_runs: [street_crowd_day, street_crowd_far_day, smoke_mock_day, disguise_and_tamper_day]
+max_frame: 300
+batch_fps: 10
+checkpoint: mix_300_s0
+h24_out: out/experiments/h24_reid_assoc
+h17_det_cache: out/experiments/h17_tracking_transfer/dets/mix_300_s0
+h24_emb_cache: out/experiments/h24_reid_assoc/emb/mot20/mix_300_s0
+detector: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt
+mot20_root: ~/data/mot/extracted/MOT20/train
+mot20_sequences: [MOT20-01, MOT20-02, MOT20-03, MOT20-05]
+imgsz: 640
+det_conf: 0.1
+det_batch: 4
+emb_min_score: 0.5
+embed_batch: 32
+ema: 0.9
+min_free_mib: 3500
+workers: 6
+n_boot: 2000
+figure: docs/research/figures/h71_config_transfer.png
+grid:
+  w: [0.0, 2.0, 8.0]
+  match_iou: [0.2, 0.4]
+  max_lost_s: [0.4, 2.0]
+  high: [0.4, 0.6]

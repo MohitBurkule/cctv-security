@@ -1,0 +1,340 @@
+runner: dose_fixedstep
+seed: 26
+base_model: yolov8n.pt
+batch_dir: out/batch_v7
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands:
+- - 0
+  - 80
+- - 80
+  - 120
+- - 120
+  - 160
+- - 160
+  - 240
+- - 240
+  - 1000000000
+synthetic_train_runs:
+- disguise_and_tamper_day
+- disguise_and_tamper_night
+- street_crowd_day
+- street_crowd_night
+- street_crowd_far_day
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+  close_mosaic: 0
+eval_sets:
+  mot20_02:
+  - MOT20-02
+leaky_sets: []
+eval_imgsz:
+- 640
+primary_key: mot20_02@640
+hypothesis: 'H26 (docs/research/66, reduced design): at a fixed 450 optimiser steps,
+  the MOT20-02 AP gain of adding batch_v8 frames to 60 real peaks between 100 and
+  1,000 frames; tests whether H7''s fade at 1,000 was the step-count confound.'
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+doses:
+- 0
+- 100
+- 300
+- 600
+- 1000
+fixed_steps:
+  presentations: 3600
+  warmup_iters: 225
+  batch: 8
+primary_contrasts:
+- - dose0
+  - dose100
+- - dose0
+  - dose300
+- - dose0
+  - dose600
+- - dose0
+  - dose1000
+secondary_contrasts: []
+arms:
+- name: dose0_s0
+  seed: 0
+  description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  train:
+    real: &id001
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- name: dose100_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: &id003
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id002
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: dose300_s0
+  seed: 0
+  description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- name: dose600_s0
+  seed: 0
+  description: real 60x5 + 600 v8 vis, 4 ep x 900 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 600
+  train_opts:
+    epochs: 4
+    warmup_epochs: 2.0
+- name: dose1000_s0
+  seed: 0
+  description: real 60x5 + 1000 v8 vis, 2 ep x 1800 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 1000
+    pad_to: 1800
+  train_opts:
+    epochs: 2
+    warmup_epochs: 1.0
+- name: dose0_s1
+  seed: 1
+  description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  train:
+    real: *id001
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- name: dose100_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: dose300_s1
+  seed: 1
+  description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- name: dose600_s1
+  seed: 1
+  description: real 60x5 + 600 v8 vis, 4 ep x 900 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 600
+  train_opts:
+    epochs: 4
+    warmup_epochs: 2.0
+- name: dose1000_s1
+  seed: 1
+  description: real 60x5 + 1000 v8 vis, 2 ep x 1800 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 1000
+    pad_to: 1800
+  train_opts:
+    epochs: 2
+    warmup_epochs: 1.0
+- name: dose0_s2
+  seed: 2
+  description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  train:
+    real: *id001
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- name: dose100_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: dose300_s2
+  seed: 2
+  description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- name: dose600_s2
+  seed: 2
+  description: real 60x5 + 600 v8 vis, 4 ep x 900 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 600
+  train_opts:
+    epochs: 4
+    warmup_epochs: 2.0
+- name: dose1000_s2
+  seed: 2
+  description: real 60x5 + 1000 v8 vis, 2 ep x 1800 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 1000
+    pad_to: 1800
+  train_opts:
+    epochs: 2
+    warmup_epochs: 1.0
+- name: dose0_s3
+  seed: 3
+  description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  train:
+    real: *id001
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- name: dose100_s3
+  seed: 3
+  description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: dose300_s3
+  seed: 3
+  description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- name: dose600_s3
+  seed: 3
+  description: real 60x5 + 600 v8 vis, 4 ep x 900 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 600
+  train_opts:
+    epochs: 4
+    warmup_epochs: 2.0
+- name: dose1000_s3
+  seed: 3
+  description: real 60x5 + 1000 v8 vis, 2 ep x 1800 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 1000
+    pad_to: 1800
+  train_opts:
+    epochs: 2
+    warmup_epochs: 1.0
+- name: dose0_s4
+  seed: 4
+  description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  train:
+    real: *id001
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- name: dose100_s4
+  seed: 4
+  description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: dose300_s4
+  seed: 4
+  description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- name: dose600_s4
+  seed: 4
+  description: real 60x5 + 600 v8 vis, 4 ep x 900 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 600
+  train_opts:
+    epochs: 4
+    warmup_epochs: 2.0
+- name: dose1000_s4
+  seed: 4
+  description: real 60x5 + 1000 v8 vis, 2 ep x 1800 imgs = 450 steps
+  train:
+    real: *id001
+    synthetic: *id003
+    synthetic_limit: 1000
+    pad_to: 1800
+  train_opts:
+    epochs: 2
+    warmup_epochs: 1.0

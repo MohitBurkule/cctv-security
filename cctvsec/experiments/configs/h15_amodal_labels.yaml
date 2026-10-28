@@ -1,0 +1,831 @@
+runner: dose
+seed: 14
+base_model: yolov8n.pt
+batch_dir: out/batch_v7
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands:
+- - 0
+  - 80
+- - 80
+  - 120
+- - 120
+  - 160
+- - 160
+  - 240
+- - 240
+  - 1000000000
+synthetic_train_runs:
+- disguise_and_tamper_day
+- disguise_and_tamper_night
+- street_crowd_day
+- street_crowd_night
+- street_crowd_far_day
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+eval_sets:
+  mot20_02:
+  - MOT20-02
+leaky_sets: []
+eval_imgsz:
+- 640
+primary_key: mot20_02@640
+hypothesis: H15 (amodal vs visible labels). With the H14 recipe (60 real MOT20-01 x5 + 300 synthetic, 6 epochs), training the synthetic part on amodal boxes
+  (MOT20 convention) instead of visible mask boxes on the same pixels and frames raises MOT20-02 AP@640, mostly via AP75; dropping amodal rows with visibility
+  < 0.3 changes AP further (direction not predicted).
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+primary_contrasts: []
+secondary_contrasts:
+- - v8_vis_300
+  - v8_amo_300
+- - v8_amo_300
+  - v8_amo_v03_300
+- - v8_vis_300
+  - v8_amo_v03_300
+- - v7_vis_300
+  - v7_amo_300
+arms:
+- name: v7_vis_300_s0
+  seed: 0
+  description: real 60x5 + 300 v7 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id001
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+      batch_dir: out/batch_v7
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_amo_300_s0
+  seed: 0
+  description: real 60x5 + 300 v7 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_vis_300_s0
+  seed: 0
+  description: real 60x5 + 300 v8 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id002
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_300_s0
+  seed: 0
+  description: real 60x5 + 300 v8 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_v03_300_s0
+  seed: 0
+  description: real 60x5 + 300 v8 synthetic, amo_v03 labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_vis_300_s1
+  seed: 1
+  description: real 60x5 + 300 v7 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_amo_300_s1
+  seed: 1
+  description: real 60x5 + 300 v7 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_vis_300_s1
+  seed: 1
+  description: real 60x5 + 300 v8 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_300_s1
+  seed: 1
+  description: real 60x5 + 300 v8 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_v03_300_s1
+  seed: 1
+  description: real 60x5 + 300 v8 synthetic, amo_v03 labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_vis_300_s2
+  seed: 2
+  description: real 60x5 + 300 v7 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_amo_300_s2
+  seed: 2
+  description: real 60x5 + 300 v7 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_vis_300_s2
+  seed: 2
+  description: real 60x5 + 300 v8 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_300_s2
+  seed: 2
+  description: real 60x5 + 300 v8 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_v03_300_s2
+  seed: 2
+  description: real 60x5 + 300 v8 synthetic, amo_v03 labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_vis_300_s3
+  seed: 3
+  description: real 60x5 + 300 v7 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_amo_300_s3
+  seed: 3
+  description: real 60x5 + 300 v7 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_vis_300_s3
+  seed: 3
+  description: real 60x5 + 300 v8 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_300_s3
+  seed: 3
+  description: real 60x5 + 300 v8 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_v03_300_s3
+  seed: 3
+  description: real 60x5 + 300 v8 synthetic, amo_v03 labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_vis_300_s4
+  seed: 4
+  description: real 60x5 + 300 v7 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_amo_300_s4
+  seed: 4
+  description: real 60x5 + 300 v7 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_vis_300_s4
+  seed: 4
+  description: real 60x5 + 300 v8 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_300_s4
+  seed: 4
+  description: real 60x5 + 300 v8 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_v03_300_s4
+  seed: 4
+  description: real 60x5 + 300 v8 synthetic, amo_v03 labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_vis_300_s5
+  seed: 5
+  description: real 60x5 + 300 v7 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_amo_300_s5
+  seed: 5
+  description: real 60x5 + 300 v7 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_vis_300_s5
+  seed: 5
+  description: real 60x5 + 300 v8 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_300_s5
+  seed: 5
+  description: real 60x5 + 300 v8 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_v03_300_s5
+  seed: 5
+  description: real 60x5 + 300 v8 synthetic, amo_v03 labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_vis_300_s6
+  seed: 6
+  description: real 60x5 + 300 v7 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v7_amo_300_s6
+  seed: 6
+  description: real 60x5 + 300 v7 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v7
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_vis_300_s6
+  seed: 6
+  description: real 60x5 + 300 v8 synthetic, vis labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_300_s6
+  seed: 6
+  description: real 60x5 + 300 v8 synthetic, amo labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: v8_amo_v03_300_s6
+  seed: 6
+  description: real 60x5 + 300 v8 synthetic, amo_v03 labels
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id002
+      batch_dir: out/batch_v8
+      gt_subdir: amodal
+      min_vis: 0.3
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5

@@ -1,0 +1,47 @@
+runner: sensor_fusion
+h54: true
+seed: 54
+world_seed: 40
+hypothesis: 'H54 (docs/research/66, pre-registered in 32): with a generated fence_tailgate behaviour (and its
+  badged staff_escort twin) and alarm->sensor association on the noisy tracked position, C+abc still removes
+  >= 90 % of twin FA with recall@10 loss <= 0.03 vs C; the generated tailgater reaches recall@10 >= 0.6 only
+  with a gate-section people counter (C+abcg). Every sensor parameter is a declared assumption.'
+h12_results: out/experiments/h12_alarm_scale/results.json
+clean_regen:
+  h12_results: out/experiments/h12_alarm_scale/results.json
+  cache: out/experiments/h54_tailgate_fusion/clean_tracks
+  patrol_per_h: 2.0
+  maintenance_per_h: 1.0
+  wildlife_per_h: 4.0
+  wildlife_dur_s: [30, 120]
+  staff_pair_per_h: 1.0
+recall_cache: out/experiments/h54_tailgate_fusion/recall_tracks
+n_clean: 676
+recall: {n_intrusion: 100, n_probe: 100, n_climb: 100, n_tailgate: 100, duration_s: 300}
+base_arm: C
+sterile_tags: [restricted, perimeter_fence]
+context_tags: [gate, queue]
+twin_kinds: [patrol_guard, maintenance_visit, staff_pair]
+noise:
+  jitter_m: 0.30
+  frag_rate_per_s: 0.011111
+  height_mu: 1.70
+  height_sd: 0.09
+  height_tick_sd: 0.15
+  ghost_per_cam_h: 10.0
+  ghost_dur_s: [0.4, 4.0]
+  ghost_speed: [0.0, 1.5]
+  ghost_wildlife_p: 0.5
+arms:
+  A: {min_age_s: 2.0, min_height_m: 1.2}
+  B: {min_depth_m: 1.5, min_dwell_s: 5.0}
+  C: {context_m: 4.0}
+# ---- simulated sensors: ASSUMPTIONS, not fitted (H53 values + the gate counter)
+gate_log: {p_swipe: 0.98, jitter_s: 1.0, window_s: 15.0}
+rf: {p_carry: 0.95, tx_dbm: 0.0, advert_hz: 1.0, miss_p: 0.15, path_loss_n: 2.8, shadow_db: 4.0,
+     rssi_min_dbm: -80.0, window_s: 5.0}
+pids: {p_detect: 0.90, lead_s: [0.0, 10.0], wind_per_zone_h: 1.0, window_before_s: 30.0, window_after_s: 5.0}
+gate_counter: {p_count: 0.95, window_s: 10.0, gate_r_m: 3.0}
+tolerances_s: [10, 30]
+n_boot: 2000
+workers: 6

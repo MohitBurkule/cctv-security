@@ -1,0 +1,54 @@
+runner: noise_recalibration
+hypothesis: >
+  H3g (noise recalibration, CC0). The shipped cctv_day_720p sensor noise, measured on its output
+  with the Immerkaer MAD-of-Laplacian estimator, is >= 2x the same estimate on 12 real day CCTV
+  frames. Refitting only the noise level (iso_gain, read_noise, fpn scaled by one std factor s) to
+  the real estimate recovers batch_v8 far recall (GT >= 20 px, conf 0.25) to >= 0.60 on the 2.0x
+  tile-border arm AND cuts the near cam_01 (GT >= 80 px) raw->degraded drop below 0.05 on both
+  arms. Hard negative: the matched profile keeps noise / blur / blockiness inside the real
+  p10-p90 band on >= 8 of 12 frames. Pre-registered in docs/research/32 §H3g.
+seed: 0
+model: yolov8n.pt
+device: cpu
+batch_dir: out/batch_v8
+run: street_crowd_far_day
+profile: cctv_day_720p
+fps: 12.5
+seq_seeds: {cam_01: 0, cam_02: 1, cam_03: 2}   # survsim/video.py: seed 0 + sorted camera index
+real_dir: ~/data/real_cctv                    # 12 MOT16/17/20 frames; non-commercial, measure only
+s_grid: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0]
+fit_frames: 16          # frames 0..15 of each camera, full chain with sequence codec (gop 8)
+workers: 6
+det_workers: 2
+torch_threads: 3
+far_cams: [cam_02, cam_03]
+near_cam: cam_01
+stride: 6
+offset: 3
+frames_every: 2          # = H3f's 50 far frames
+frames_dir: out/experiments/h3g/frames
+dets_dir: out/experiments/h3g/dets
+h3d_dets_dir: out/experiments/h3d/dets
+figure: docs/research/figures/h3g_noise_recal.png
+min_gt_height: 13
+bands: [[13, 20], [20, 40], [40, 80], [80, 1000000000]]
+primary_min_px: 20
+hn_min_px: 80
+det_conf: 0.01
+op_conf: 0.25
+iou: 0.5
+tile: [320, 240]
+overlap: 0.2
+tile_imgsz: 640
+block_sampled: 5
+hn_block_sampled: 10
+n_boot: 1000
+merge:
+  nms_iou: 0.5
+  border_margin_px: 3
+  border_iom: 0.5
+decision:
+  noise_ratio_min: 2.0     # hypothesis (1): shipped / real output sigma
+  far_recall_min: 0.60     # tiles_d matched far recall (point)
+  near_max_drop: 0.05      # near raw - matched, point, BOTH arms
+  hn_min_frames: 8         # of 12 matched frames with all 3 realism stats in the real p10-p90 band

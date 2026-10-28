@@ -1,0 +1,49 @@
+runner: degrade_ablation_far
+hypothesis: >
+  H3f (degrade ablation, CC0). On batch_v8 street_crowd_far_day far cameras (cam_02/03, 100
+  frames), one stage group of cctv_day_720p (optics / noise / isp / exposure / codec) accounts
+  for >= 60 % of the raw -> degraded far recall loss (GT >= 20 px, conf 0.25) by BOTH
+  leave-one-out and add-one-in, on the 2.0x tile-border arm (d). Predicted culprit: codec.
+  Hard negative: near cam_01 GT >= 80 px loses < 0.05 recall under the full profile.
+  Pre-registered in docs/research/32 §H3f.
+seed: 0
+model: yolov8n.pt
+device: cpu              # GPU shared with editor renders
+batch_dir: out/batch_v8
+run: street_crowd_far_day
+profile: cctv_day_720p
+fps: 12.5                # survsim/video.py make_videos default, as batch_v8 was made
+seq_seeds: {cam_02: 1, cam_03: 2}   # make_videos: seed 0 + sorted camera index
+far_cams: [cam_02, cam_03]
+near_cam: cam_01
+stride: 6
+offset: 3                # frames 3, 9, ..., 297: 50 per far camera, all in H3d's stride-3 cache
+frames_dir: out/experiments/h3f/frames
+dets_dir: out/experiments/h3f/dets
+h3d_dets_dir: out/experiments/h3d/dets   # raw + shipped-degraded detections, reused unchanged
+figure: docs/research/figures/h3f_degrade_ablation.png
+degrade_workers: 4
+min_gt_height: 13
+bands: [[13, 20], [20, 40], [40, 80], [80, 1000000000]]
+primary_min_px: 20
+hn_min_px: 80
+det_conf: 0.01
+op_conf: 0.25
+iou: 0.5
+tile: [320, 240]
+overlap: 0.2
+tile_imgsz: 640
+block_sampled: 5         # 5 sampled frames at stride 6 = 30 source frames per block
+hn_block_sampled: 10     # near cam uses H3d's stride-3 cache: 10 sampled = 30 source frames
+n_boot: 1000
+merge:
+  nms_iou: 0.5
+  border_margin_px: 3
+  border_iom: 0.5
+decision:
+  primary_arm: tiles_d
+  share_min: 0.60        # culprit's LOO share AND AOI share both >= 0.60 (point)
+  min_loss: 0.10         # raw - full recall must be >= 0.10 or there is nothing to attribute
+  predicted_culprit: codec
+  sanity_tol: 0.05       # |full (re-degraded, no OSD) - shipped| recall on the primary arm
+  hn_max_drop: 0.05

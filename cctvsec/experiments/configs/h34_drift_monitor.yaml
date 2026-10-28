@@ -1,0 +1,37 @@
+# H34 (docs/research/32 pre-registration, 66 H34): label-free drift monitor.
+runner: drift_monitor
+hypothesis: >-
+  A label-free monitor on the 13 per-frame image statistics (PSI or KS vs a per-camera
+  reference window) detects a degrade-profile shift within a window with <= 1 false
+  trigger per 24 camera-hours on stationary streams, and its score correlates
+  (Spearman >= 0.5) with the zero-shot detector recall drop.
+seed: 0
+batch: out/batch_v8
+runs: [street_crowd_day, street_crowd_far_day, disguise_and_tamper_day]
+# Deviation (declared in 32 before results): disguise_and_tamper_day has no cam_01..03;
+# its three fixed cameras (PTZ excluded: slewing breaks the stationary null) are used.
+cams:
+  street_crowd_day: [cam_01, cam_02, cam_03]
+  street_crowd_far_day: [cam_01, cam_02, cam_03]
+  disguise_and_tamper_day: [cam_gate, cam_sub, cam_yard]
+stride: 2
+n_samples: 150
+shift_at: 75
+ref: [0, 50]
+window: 13
+base_profile: cctv_day_720p
+null_seeds: [0, 1]
+calib_seed: 0
+shifts:
+  dusk:  [{ev: -1.0, iso_mult: 1.5}, {ev: -2.0, iso_mult: 2.0}, {ev: -3.0, iso_mult: 3.0}]
+  blur:  [{defocus: 1.6}, {defocus: 2.5}, {defocus: 3.5}]
+  codec: [{crf: 36}, {crf: 40}, {crf: 44}]
+  dirt:  [{dirt: 0.3}, {dirt: 0.5}, {dirt: 0.8}]
+psi_bins: 10
+psi_thresholds: [0.10, 0.20, 0.25]
+ks_alpha: 0.01
+cal_margin: 1.1
+emb_imgsz: 320
+evals_per_24h: 1440
+recall: {weights: yolov8n.pt, imgsz: 640, conf: 0.25, iou: 0.5, min_h: 20, frames_per_condition: 23}
+workers: 10

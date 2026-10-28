@@ -1,0 +1,16 @@
+runner: reid_epochs
+hypothesis: >
+  H10 (ReID across appearance epochs). On disguise_and_tamper (batch_v7 day+night),
+  OSNet-ImageNet and HSV-histogram rank-1 collapse across an outfit change while a
+  gait signature does not. Pre-registered in docs/research/32 (commit 741b025).
+seed: 0
+batch_dir: out/batch_v7
+world: disguise_and_tamper
+runs: [disguise_and_tamper_day, disguise_and_tamper_night]
+min_h: 48
+min_vis: 0.6
+per_id_per_cam: 6
+fps: 10
+max_frame: 299
+gait_noise: 0.15
+min_free_mib: 2048

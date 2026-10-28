@@ -1,0 +1,436 @@
+runner: dose_fixedstep
+seed: 61
+base_model: yolov8n.pt
+batch_dir: out/batch_v7
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands:
+- - 0
+  - 80
+- - 80
+  - 120
+- - 120
+  - 160
+- - 160
+  - 240
+- - 240
+  - 1000000000
+synthetic_train_runs:
+- disguise_and_tamper_day
+- disguise_and_tamper_night
+- street_crowd_day
+- street_crowd_night
+- street_crowd_far_day
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+  close_mosaic: 0
+eval_sets:
+  mot20_02:
+  - MOT20-02
+leaky_sets: []
+eval_imgsz:
+- 640
+primary_key: mot20_02@640
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+fixed_steps:
+  presentations: 3600
+  warmup_iters: 225
+  batch: 8
+paired_primary: true
+doses:
+- 0
+- 300
+secondary_contrasts: []
+reuse_from:
+- out/experiments/h51_equal_steps
+- out/experiments/h52_ablation
+arms:
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s0
+  seed: 0
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id001
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id001
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s1
+  seed: 1
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id002
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id002
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s2
+  seed: 2
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id003
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id003
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s3
+  seed: 3
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id004
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id004
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s4
+  seed: 4
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id005
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id005
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s5
+  seed: 5
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id006
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id006
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s6
+  seed: 6
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id007
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id007
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s7
+  seed: 7
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id008
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id008
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s8
+  seed: 8
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id009
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id009
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 300 v8 (silhouette), 6 ep x 600 imgs = 450 steps
+  name: sil300_s9
+  seed: 9
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id010
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id010
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+    synthetic_mode: silhouette
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+arm_groups:
+- dose0
+- dose300
+- sil300
+primary_contrasts:
+- - sil300
+  - dose300
+- - dose0
+  - sil300
+reused_arms:
+- dose0_s0
+- dose0_s1
+- dose0_s2
+- dose0_s3
+- dose0_s4
+- dose0_s5
+- dose0_s6
+- dose0_s7
+- dose0_s8
+- dose0_s9
+- dose300_s0
+- dose300_s1
+- dose300_s2
+- dose300_s3
+- dose300_s4
+- dose300_s5
+- dose300_s6
+- dose300_s7
+- dose300_s8
+- dose300_s9
+hypothesis: 'H61 (docs/research/66, 32 AUDIT_H52): is H52''s masked-background gain
+  real background content or a box-shaped inpainting artefact? sil300 removes the
+  same 300 batch_v8 people by their rendered silhouette mask (survsim/gt/mask_boxes.py),
+  filled with the frame''s background median colour -- no inpainting, no box shape,
+  no boxes -- at the H51 recipe (450 steps, 225 warm-up, close_mosaic 0), 10 paired
+  seeds reusing dose0 (real-only) and dose300 (true labels) byte-identical from H51/H52.
+  Primary contrasts, Holm over 2: dose300 - sil300 (a - c''); sil300 - dose0 (c''
+  - real). Rule: background-real iff (c'') - real >= +0.003 with CI excluding 0 and
+  Holm p < 0.05; box-fill-artefact iff (c'') approx real.'

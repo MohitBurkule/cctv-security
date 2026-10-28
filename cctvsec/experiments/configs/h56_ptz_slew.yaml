@@ -1,0 +1,20 @@
+runner: ptz_slew
+seed: 56
+hypothesis: 'H56 (docs/research/66, pre-registered in 32): with H39 datasheet-focal calibration error a PTZ
+  slewed to the fixed-camera world estimate acquires the target (usably_visible) within 3 s at >= 0.9 for
+  targets <= 20 m and <= 0.6 beyond 30 m; at A1''s 120 alarms/h a second alarm is missed >= 30 % with 1 PTZ.'
+site: {w: 240.0, h: 160.0, grid: [8, 5], cam_h: 6.0, cam_pitch: -12.0, cam_hfov: 60.0, res: [1280, 720]}
+ptz_arms: {"1": [[120.0, 80.0]], "2": [[60.0, 80.0], [180.0, 80.0]]}
+ptz: {h: 10.0, speed_dps: 200.0, hfov_min: 2.0, hfov_max: 60.0, zoom_s: 0.8, latency_s: 0.5,
+      frame_w_m: 6.0, aim_h_m: 0.9, dwell_s: 10.0, home_pitch: -15.0}
+calib: {exact_rmse: 0.21, near_rmse: 0.96, far_rmse: 2.92, near_m: 20.0, far_m: 30.0, lateral_ratio: 0.3333333}
+target: {speed_mps: 1.4, height_m: 1.7}
+acquire_window_s: 3.0
+tick_s: 0.2
+bins: [[0, 20], [20, 30], [30, 1000]]
+n_seeds: 10
+seed_base: 56000
+n_alarms_indep: 300
+alarm_rate_per_h: 120.0
+contention_hours: 1.0
+n_boot: 2000

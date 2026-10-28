@@ -1,0 +1,33 @@
+runner: night_noise_check
+hypothesis: >
+  H32c (night noise check). (1) cctv_night_lowlight output sigma (Immerkaer MAD-of-Laplacian,
+  H3g's estimator) on the night showcase render is >= 1.5x the median of the 10 LLVIP-visible
+  hold-out frames. (2) Luma: report how much of the raw-vs-real gap the profile closes, and how
+  much its AE target alone closes by construction. (3) Refitting only the noise level to the 15
+  LLVIP tuning frames raises YOLOv8n recall (conf 0.25, GT >= 20 px, vis > 0) over the shipped
+  profile by >= 0.10 with the 95 % block CI excluding 0. Hard negative: the matched profile's luma
+  lies in the LLVIP hold-out p10-p90 band on >= 8 of 13 frames. LLVIP: measure only.
+  Pre-registered in docs/research/32 §H32c.
+seed: 0
+model: yolov8n.pt
+real_root: ~/data/real_cctv_night/llvip_vis   # LLVIP, non-commercial: measure only
+tune_n: 15
+run_dir: out/showcase/showcase_all_night
+cams: [cam_01, cam_02, cam_ptz]
+profile: cctv_night_lowlight
+frame_start: 3
+frame_stop: 103
+stride: 5            # 20 frames per camera, 60 total
+block_frames: 30     # bootstrap block = 30 render frames of one camera (12 blocks)
+s_grid: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0]
+imgsz: 1280
+conf: 0.25
+min_h: 20
+min_vis: 0.01
+hn_frames: 13
+n_boot: 10000
+figure: docs/research/figures/h32c_night_noise.png
+decision:
+  noise_ratio_min: 1.5
+  recall_delta_min: 0.10
+  hn_min_frames: 8

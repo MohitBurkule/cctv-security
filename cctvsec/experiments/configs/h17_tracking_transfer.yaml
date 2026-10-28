@@ -1,0 +1,44 @@
+runner: tracking_transfer
+hypothesis: 'H17: the h14b small-dose detection gain (mix_300 vs real-only mix_0,
+  yolov8n) carries to ByteTrack tracking on MOT20-02: small positive HOTA shift, mainly
+  via DetA. Pre-registered in docs/research/32.'
+seed: 0
+mot20_subset: $SURVSIM_MOT20_SUBSET
+sequences:
+- MOT20-02
+imgsz: 640
+det_conf: 0.1
+tracker: {}
+min_free_mib: 2048
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+contrasts:
+- - mix_0
+  - mix_300
+arms:
+- name: zero_shot_yolov8n
+  weights: yolov8n.pt
+- name: mix_0_s0
+  weights: out/experiments/h14_dose/work/mix_0_s0/train/weights/last.pt
+- name: mix_300_s0
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt
+- name: mix_0_s1
+  weights: out/experiments/h14_dose/work/mix_0_s1/train/weights/last.pt
+- name: mix_300_s1
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/train/weights/last.pt
+- name: mix_0_s2
+  weights: out/experiments/h14_dose/work/mix_0_s2/train/weights/last.pt
+- name: mix_300_s2
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/train/weights/last.pt
+- name: mix_0_s3
+  weights: out/experiments/h14_dose/work/mix_0_s3/train/weights/last.pt
+- name: mix_300_s3
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s3/train/weights/last.pt
+- name: mix_0_s4
+  weights: out/experiments/h14_dose/work/mix_0_s4/train/weights/last.pt
+- name: mix_300_s4
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s4/train/weights/last.pt

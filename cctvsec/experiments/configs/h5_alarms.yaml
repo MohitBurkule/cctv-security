@@ -1,0 +1,18 @@
+runner: alarms
+hypothesis: >
+  H5 (alarm scoring). On batch_v6 worlds the naive DwellRule(60 s) misses the
+  pacing loiterers that PathLoiterRule catches, PathLoiterRule pays for it in
+  false alarms far above an operator budget, and i-LIDS-compatible scoring
+  flatters precision relative to SurvSim's default scoring without changing
+  recall.
+seed: 0
+batch_dir: out/batch_v6
+runs: [disguise_and_tamper_day, disguise_and_tamper_night, smoke_mock_day, smoke_mock_night,
+       street_crowd_day, street_crowd_night, street_crowd_far_day, street_crowd_far_night]
+rules:
+  - {name: dwell_60, kind: dwell, threshold_s: 60}
+  - {name: dwell_25, kind: dwell, threshold_s: 25}
+  - {name: path_loiter_25, kind: path, threshold_s: 25, radius_m: 4, reentry_gap_s: 15}
+  - {name: path_loiter_15, kind: path, threshold_s: 15, radius_m: 4, reentry_gap_s: 15}
+scoring: [default, ilids_compat]
+tolerances_s: [10, 30]

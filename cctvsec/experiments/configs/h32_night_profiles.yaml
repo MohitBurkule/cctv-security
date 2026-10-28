@@ -1,0 +1,33 @@
+runner: night_profiles
+hypothesis: >
+  H32a: cctv_night_lowlight lands >= 9/13 docs/15 stats in the hold-out LLVIP-visible
+  band and cctv_thermal >= 8/13 in the hold-out LLVIP-thermal band (tuned on the
+  first 15 LLVIP frames of each modality, held out the last 10). H32b: zero-shot
+  person recall on batch_v8 night under raw / cctv_night_ir / lowlight / thermal.
+  Pre-registered in docs/research/32 (commit f3353a2). LLVIP: measurement only.
+seed: 0
+batch_dir: out/batch_v8
+night_runs: [disguise_and_tamper_night, street_crowd_night, street_crowd_far_night, smoke_mock_night]
+profiles: [cctv_night_ir, cctv_night_lowlight, cctv_thermal]
+realism:
+  real_root: ~/data/real_cctv_night
+  modalities: {vis: llvip_vis, ir: llvip_ir}
+  tune_n: 15
+  run: street_crowd_night
+  cam: cam_02
+  n: 30
+targets:
+  cctv_night_lowlight: [vis, 9]
+  cctv_thermal: [ir, 8]
+  cctv_night_ir: [vis, 9]
+models: [yolov8n.pt, weights/yolo26n.pt]
+imgsz: 1280
+det_conf: 0.1
+op_conf: 0.25
+min_h: 40
+frame_start: 1
+max_frame: 299
+stride: 20
+n_boot: 10000
+min_free_mib: 1536
+gpu_wait_s: 300

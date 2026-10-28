@@ -1,0 +1,22 @@
+out/
+*.mp4
+*.exr
+__pycache__/
+*.pyc
+.venv/
+unreal/**/Binaries/
+unreal/**/Intermediate/
+unreal/**/Saved/
+unreal/**/DerivedDataCache/
+.venv/
+data/
+*.egg-info/
+.pytest_cache/
+*.pt
+
+# H60 per-site operator-id salts (secret; never commit)
+*.salt
+
+# interview demo clips are tracked on purpose
+!docs/research/demo/*.mp4
+!docs/research/demo/gallery/*.mp4

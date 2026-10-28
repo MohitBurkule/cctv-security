@@ -1,0 +1,27 @@
+runner: drift_monitor_scale
+seed: 701
+hypothesis: 'H70b (pre-registered in 32): with granularity held fixed (every monitor per site), the theta scheme
+  (pooled vs per-site) changes daily-Poisson drift detection within 48 h by < 0.05 at every drift size; a CUSUM
+  on hourly counts detects x1.5 within 48 h in >= 0.8 of instances at <= 0.02 false flags/site-week; a benign
+  2x day/night pattern is not flagged by the flat CUSUM. Simulated; every rate is a declared assumption.'
+n_seeds: 10
+worlds_per_seed: 20
+workers: 6
+n_boot: 2000
+sites: 40
+cams_per_site: 10
+budget: 0.5
+cand_per_cam_h: 20.0
+bg_mu: -2.0
+bg_sd: 1.0
+sigma_delta: 0.3
+drift_sizes: [1.25, 1.5, 2.0, 3.0]
+onset_lo: 24
+onset_hi: 72
+monitor_p: 0.001
+cusum_shift: 1.5
+cusum_week_fa: 0.01
+cusum_null_weeks: 2000
+day_hours: [7, 19]
+day_night_ratio: 2.0
+figure: docs/research/figures/h70b_drift_detection.png

@@ -1,0 +1,39 @@
+runner: quant_export
+mode: h43d
+seed: 43
+hypothesis: 'H43d (docs/research/66, pre-registered in 32; follow-up to H43c). On the same 5 checkpoints
+  as H43b/H43c, running the QAT fake-quant fine-tune for 600 iterations instead of 150 (same recipe:
+  AdamW, H51 auto LR / 10, batch 8, imgsz 640), then exporting the QDQ graph from the learned observer
+  ranges exactly as H43c (TensorQuantOverrides, no fresh MinMax pass), raises the mean AP75 recovery
+  vs int8_minmax above H43c''s 0.439, moving it materially toward (not necessarily past) the 0.50
+  secondary bar. CPU-only onnxruntime eval; no latency claims (R46).'
+h43_out: out/experiments/h43_qat
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+eval_sets:
+  mot20_02:
+  - MOT20-02
+eval_imgsz: 640
+input_shape: [384, 640]
+checkpoints:
+  mix_300_s0: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s0.json}
+  mix_300_s1: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s1.json}
+  mix_300_s2: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s2.json}
+  dose300_s0: {pt: out/experiments/h51_equal_steps/work/dose300_s0/train/weights/last.pt, data: out/experiments/h43_qat/data/dose300_s0/data.yaml}
+  dose300_s1: {pt: out/experiments/h51_equal_steps/work/dose300_s1/train/weights/last.pt, data: out/experiments/h43_qat/data/dose300_s1/data.yaml}
+qat:
+  iters: 600
+  lr: 1.19e-5     # H51 'optimizer=auto' -> AdamW lr 0.000119, / 10 (same as H43/H43b/H43c)
+  weight_decay: 0.0005
+  batch: 8
+  imgsz: 640
+  workers: 2
+thresholds:
+  qdq_recovery: 0.8
+  qdq_recovery_secondary: 0.5
+  qdq_ap_loss: 0.005
+latency:
+  n: 20
+  warmup: 5

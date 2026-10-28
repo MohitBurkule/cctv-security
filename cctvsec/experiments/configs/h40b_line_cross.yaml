@@ -1,0 +1,43 @@
+runner: line_cross
+seed: 40
+hypothesis: 'H40b (docs/research/66, pre-registered in 32): with intrusions that really cross (>= 3 m inside,
+  post-cross arc), fenced restricted zones and a fence_climb arc, the full line-cross rule (arm C: gating +
+  direction/1.5 m depth/5 s dwell + gate context) reaches recall@10 s >= 0.9 on intrusion / fence-cut /
+  fence-climb worlds with primary clean FA/cam-h <= 2.915 (the round-3 loiter A1 level); patrol/maintenance
+  twin FA reported separately.'
+# Clean worlds: the 676 H12 worlds regenerated (same H12 seed and recipe) with the fenced simulator,
+# plus twins/wildlife from a separate stream (seed 40, [40, i, 41]).
+clean_regen:
+  h12_results: out/experiments/h12_alarm_scale/results.json
+  cache: out/experiments/h40b_line_cross/clean_tracks
+  patrol_per_h: 2.0
+  maintenance_per_h: 1.0
+  wildlife_per_h: 4.0
+  wildlife_dur_s: [30, 120]
+n_clean: 676
+sterile_tags: [restricted, perimeter_fence]
+context_tags: [gate, queue]
+recall:
+  n_intrusion: 100
+  n_probe: 100
+  n_climb: 100
+  duration_s: 300
+noise:
+  jitter_m: 0.30
+  frag_rate_per_s: 0.011111
+  height_mu: 1.70
+  height_sd: 0.09
+  height_tick_sd: 0.15
+  ghost_per_cam_h: 10.0
+  ghost_dur_s: [0.4, 4.0]
+  ghost_speed: [0.0, 1.5]
+  ghost_wildlife_p: 0.5
+arms:
+  A: {min_age_s: 2.0, min_height_m: 1.2}
+  B: {min_depth_m: 1.5, min_dwell_s: 5.0}
+  C: {context_m: 4.0}
+tolerances_s: [10, 30]
+budget_fa_per_cam_h: 0.001
+n_boot: 2000
+thresholds: {naive_x_budget: 10, fa_ratio: 5, recall: 0.9, fa_max: 2.915}
+workers: 10

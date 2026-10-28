@@ -1,0 +1,10 @@
+runner: theta_policy
+seed: 42
+hypothesis: 'H42 (docs/research/66, pre-registered in 32): choosing the frozen A1 weights'' (θ, clock) by
+  pooling the select folds of the 10 H23 train splits (leave-one-fold-out) or by conformal risk control
+  (H33) at α = 2.915 on the pooled clean select-fold worlds cuts the between-draw range and SD of H12
+  FA/cam-h >= 2x vs per-fold selection, with H12 recall >= 0.80 in >= 9/10 draws.'
+fold_seeds: [58, 158, 258, 358, 458, 558, 658, 758, 858, 958]
+alpha: 2.915
+n_boot: 2000
+workers: 3

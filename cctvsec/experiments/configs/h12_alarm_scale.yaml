@@ -1,0 +1,32 @@
+runner: alarm_scale
+hypothesis: >
+  H12 (alarm budget at scale). On >= 3,000 camera-hours of hard-negative-only
+  mock worlds (no loiterers), every loiter rule that has non-zero recall on
+  worlds with loiterers is far above the 0.001 FA/camera-hour budget with its
+  Garwood 95 % lower bound also above it; DwellRule(60) is the lowest-rate
+  rule but still over budget; i-LIDS-compatible scoring lowers the FA count
+  only through 5 s coalescing. The dominant nuisance causes are the dwell
+  archetypes (commute_wait, smoke_break, phone_stop, queue), not transit.
+seed: 12
+workers: 11
+duration_s: 1800
+fps: 5
+warmup_s: 60
+arrivals_per_min: [1.5, 6.0]
+mix: {transit: 0.55, commute_wait: 0.15, queue: 0.10, phone_stop: 0.10, smoke_break: 0.10}
+dur_s: {commute_wait: [20, 240], queue: [30, 150], phone_stop: [15, 120], smoke_break: [60, 360]}
+target_camera_hours: 3000
+max_worlds: 2000
+budget_fa_per_camera_hour: 0.001
+tolerance_s: 30
+rules:
+  - {name: dwell_25, kind: dwell, threshold_s: 25}
+  - {name: dwell_60, kind: dwell, threshold_s: 60}
+  - {name: path_loiter_15, kind: path, threshold_s: 15, radius_m: 4, reentry_gap_s: 15}
+  - {name: path_loiter_25, kind: path, threshold_s: 25, radius_m: 4, reentry_gap_s: 15}
+scoring: [default, ilids_compat]
+recall:
+  n_worlds: 300
+  duration_s: 300
+  tolerances_s: [10, 30]
+  incidents: [[loiter], [loiter, tailgate], [object_abandon, loiter], [erratic_motion, loiter], [disguise_swap, loiter, follow]]

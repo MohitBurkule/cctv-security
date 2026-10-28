@@ -1,0 +1,22 @@
+runner: site_generalisation
+seed: 69
+hypothesis: 'H69 (pre-registered in 32): per-site YOLO11n recall at the docs/13 operating point varies across generated
+  sites with corrected between-site SD > 0.05; a pooled detector-FP threshold calibrated on half the sites keeps
+  held-out FA/cam-h within budget in <= 80 % of splits; camera height, range, density and time of day explain
+  > 50 % of recall variance (adjusted R2). Hard negative: same-type different-seed pairs differ by no more than
+  within-site bootstrap noise.'
+sites_root: out/showcase/sites
+min_sites: 16
+weights: yolo11n.pt
+imgsz: 1280
+batch: 4
+det_floor: 0.05
+op_conf: 0.25
+frame_offset: 0
+gpu_max_used_mib: 4500
+theta_grid: [0.05, 0.95, 0.01]
+budget_fa_per_cam_h: 3600.0
+x_within_frac: 0.80
+n_splits: 200
+n_boot: 2000
+figure: docs/research/figures/h69_site_variance.png
