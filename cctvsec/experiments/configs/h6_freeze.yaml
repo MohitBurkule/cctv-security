@@ -1,0 +1,26 @@
+runner: detection
+hypothesis: >
+  H6a (why synthetic hurts: feature drift). If synthetic-only fine-tuning hurts
+  real AP because it overwrites COCO backbone features with render-specific
+  ones, freezing the backbone (freeze 10) or everything but the Detect head
+  (freeze 22) on the same H1 synthetic data should keep real MOT20 AP close to
+  zero-shot (0.276) instead of dropping to ~0.14.
+seed: 0
+base_model: yolov8n.pt   # repo root (gitignored; ultralytics downloads it if absent)
+batch_dir: out/batch_v6
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands: [[0, 80], [80, 120], [120, 160], [160, 240], [240, 1000000000]]
+synthetic_train_runs: [disguise_and_tamper_day, disguise_and_tamper_night, street_crowd_day,
+                       street_crowd_night, street_crowd_far_day]
+synthetic_val_runs: [smoke_mock_day, smoke_mock_night]
+val_sources: [{source: raw, stride: 20, phase: 0}, {source: degraded, stride: 20, phase: 10}]
+train: {epochs: 12, imgsz: 640, batch: 8, seed: 0, workers: 2}
+eval_sets: {mot20_02: [MOT20-02]}
+leaky_sets: []
+eval_imgsz: [640]
+arms:
+  - {name: synthetic_freeze10, description: H1 synthetic data; backbone (layers 0-9) frozen, train_opts: {freeze: 10}, train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]}}
+  - {name: synthetic_freeze22, description: H1 synthetic data; only the Detect head trains, train_opts: {freeze: 22}, train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]}}
+  - {name: synthetic_freeze10_s1, seed: 1, train_opts: {freeze: 10}, train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]}}
+  - {name: synthetic_freeze22_s1, seed: 1, train_opts: {freeze: 22}, train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]}}

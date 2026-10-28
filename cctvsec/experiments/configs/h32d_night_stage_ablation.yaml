@@ -1,0 +1,33 @@
+runner: night_stage_ablation
+hypothesis: >
+  H32d (night stage ablation). One cctv_night_lowlight stage group accounts for >= 60 % of the
+  raw->shipped YOLOv8n recall loss (conf 0.25, GT >= 20 px, vis > 0) in BOTH leave-one-out and
+  add-one-in, on H32c's 60 night showcase frames. Predicted culprit: codec (crf 39). Hard negative:
+  removing the culprit must not push median luma or sigma further outside the LLVIP hold-out bands
+  than shipped. LLVIP: measure only; the profile is diagnosed here, not calibrated.
+  Pre-registered in docs/research/32 §H32d.
+seed: 0
+model: yolov8n.pt
+real_root: ~/data/real_cctv_night/llvip_vis   # LLVIP, non-commercial: measure only
+tune_n: 15
+run_dir: out/showcase/showcase_all_night
+cams: [cam_01, cam_02, cam_ptz]
+profile: cctv_night_lowlight
+frame_start: 3
+frame_stop: 103
+stride: 5            # 20 frames per camera, 60 total (H32c's frames)
+block_frames: 30     # 12 blocks
+imgsz: 1280
+conf: 0.25
+min_h: 20
+min_vis: 0.01
+n_boot: 10000
+h32c_shipped_recall: 0.006
+figure: docs/research/figures/h32d_night_stages.png
+decision:
+  predicted_culprit: codec
+  share_min: 0.60
+  min_loss: 0.10
+  sanity_tol: 0.05
+  hn_tol_luma: 0.5      # grey levels
+  hn_tol_log2: 0.05     # |log2 sigma ratio|

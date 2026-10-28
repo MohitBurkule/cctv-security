@@ -1,0 +1,30 @@
+runner: night
+hypothesis: >
+  H11 (night). Zero-shot yolov8n recall falls at night vs day on batch_v7, most in
+  small boxes, and further after cctv_night_ir; fine-tuning on night-IR-degraded
+  synthetic raises real night (MOT20-05) AP50. Pre-registered in docs/research/32
+  (commit 741b025).
+seed: 0
+model: yolov8n.pt
+imgsz: 1280
+det_conf: 0.1
+op_conf: 0.25
+min_h: 40
+batch_dir: out/batch_v7
+det_cache: out/experiments/h9_tracking/dets
+day_runs: [disguise_and_tamper_day, street_crowd_day, street_crowd_far_day, smoke_mock_day]
+night_runs: [disguise_and_tamper_night, street_crowd_night, street_crowd_far_night, smoke_mock_night]
+frame_start: 1
+max_frame: 299
+stride: 5
+ir_profile: cctv_night_ir
+ir_width: 1280   # cctv_night_ir output width; renders are 1280 or 1920 wide
+mot20_root: ~/data/mot/extracted/MOT20
+real_seq: MOT20-05
+real_frames: 600
+real_stride: 10
+eval_imgsz: [640, 1280]
+ap_conf: 0.01
+n_boot: 1000
+train: {epochs: 8, imgsz: 640, batch: 8}
+min_free_mib: 2048

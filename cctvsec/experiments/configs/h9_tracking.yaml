@@ -1,0 +1,18 @@
+runner: tracking
+hypothesis: >
+  H9 (tracking). Zero-shot yolov8n + numpy ByteTrack tracks batch_v7 people worse
+  on far cameras than near and at night than day, detection-limited as on MOT20;
+  (b) the docs/13 ByteTrack fix (tau 0.6, gate-before-solve) raises HOTA on both
+  MOT20-01/02 and batch_v7. Pre-registered in docs/research/32 (commit 741b025).
+seed: 0
+model: yolov8n.pt
+imgsz: 1280
+det_conf: 0.1
+batch_dir: out/batch_v7
+runs: [disguise_and_tamper_day, disguise_and_tamper_night, street_crowd_day, street_crowd_night,
+       street_crowd_far_day, street_crowd_far_night, smoke_mock_day, smoke_mock_night]
+max_frame: 299
+fps: 10
+far_px: 50
+mot20_subset: $SURVSIM_MOT20_SUBSET
+min_free_mib: 2048

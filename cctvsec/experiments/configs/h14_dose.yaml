@@ -1,0 +1,510 @@
+runner: dose
+hypothesis: 'H14 (tiny synthetic dose, replicated). With 60 real MOT20-01 frames (x5) fixed, adding 100 or 300 batch_v7 synthetic frames raises
+  MOT20-02 AP@640 over real-only (H7: +0.010-0.011 on 2 seeds); secondary: the same dose with tight (mask-derived) GT gains more than with projected
+  GT on the same scenes.'
+seed: 14
+base_model: yolov8n.pt
+batch_dir: out/batch_v7
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands:
+- - 0
+  - 80
+- - 80
+  - 120
+- - 120
+  - 160
+- - 160
+  - 240
+- - 240
+  - 1000000000
+synthetic_train_runs:
+- disguise_and_tamper_day
+- disguise_and_tamper_night
+- street_crowd_day
+- street_crowd_night
+- street_crowd_far_day
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+eval_sets:
+  mot20_02:
+  - MOT20-02
+leaky_sets: []
+eval_imgsz:
+- 640
+primary_key: mot20_02@640
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+primary_contrasts:
+- - mix_0
+  - mix_100
+- - mix_0
+  - mix_300
+secondary_contrasts:
+- - loose_100
+  - tight_100
+- - loose_300
+  - tight_300
+- - mix_0
+  - tight_300
+- - mix_0
+  - loose_300
+arms:
+- name: mix_0_s0
+  seed: 0
+  description: real 60 x5 only
+  train:
+    real: &id001
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_100_s0
+  seed: 0
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: &id002
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 100
+    real: *id001
+- name: mix_300_s0
+  seed: 0
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 300
+    real: *id001
+- name: loose_100_s0
+  seed: 0
+  description: real + 100 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id003
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id003
+    synthetic_limit: 100
+    real: *id001
+- name: tight_100_s0
+  seed: 0
+  description: real + 100 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id004
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id004
+    synthetic_limit: 100
+    real: *id001
+- name: loose_300_s0
+  seed: 0
+  description: real + 300 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id005
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id005
+    synthetic_limit: 300
+    real: *id001
+- name: tight_300_s0
+  seed: 0
+  description: real + 300 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id006
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id006
+    synthetic_limit: 300
+    real: *id001
+- name: mix_0_s1
+  seed: 1
+  description: real 60 x5 only
+  train:
+    real: *id001
+- name: mix_100_s1
+  seed: 1
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 100
+    real: *id001
+- name: mix_300_s1
+  seed: 1
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 300
+    real: *id001
+- name: loose_100_s1
+  seed: 1
+  description: real + 100 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id007
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id007
+    synthetic_limit: 100
+    real: *id001
+- name: tight_100_s1
+  seed: 1
+  description: real + 100 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id008
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id008
+    synthetic_limit: 100
+    real: *id001
+- name: loose_300_s1
+  seed: 1
+  description: real + 300 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id009
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id009
+    synthetic_limit: 300
+    real: *id001
+- name: tight_300_s1
+  seed: 1
+  description: real + 300 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id010
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id010
+    synthetic_limit: 300
+    real: *id001
+- name: mix_0_s2
+  seed: 2
+  description: real 60 x5 only
+  train:
+    real: *id001
+- name: mix_100_s2
+  seed: 2
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 100
+    real: *id001
+- name: mix_300_s2
+  seed: 2
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 300
+    real: *id001
+- name: loose_100_s2
+  seed: 2
+  description: real + 100 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id011
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id011
+    synthetic_limit: 100
+    real: *id001
+- name: tight_100_s2
+  seed: 2
+  description: real + 100 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id012
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id012
+    synthetic_limit: 100
+    real: *id001
+- name: loose_300_s2
+  seed: 2
+  description: real + 300 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id013
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id013
+    synthetic_limit: 300
+    real: *id001
+- name: tight_300_s2
+  seed: 2
+  description: real + 300 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id014
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id014
+    synthetic_limit: 300
+    real: *id001
+- name: mix_0_s3
+  seed: 3
+  description: real 60 x5 only
+  train:
+    real: *id001
+- name: mix_100_s3
+  seed: 3
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 100
+    real: *id001
+- name: mix_300_s3
+  seed: 3
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 300
+    real: *id001
+- name: loose_100_s3
+  seed: 3
+  description: real + 100 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id015
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id015
+    synthetic_limit: 100
+    real: *id001
+- name: tight_100_s3
+  seed: 3
+  description: real + 100 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id016
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id016
+    synthetic_limit: 100
+    real: *id001
+- name: loose_300_s3
+  seed: 3
+  description: real + 300 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id017
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id017
+    synthetic_limit: 300
+    real: *id001
+- name: tight_300_s3
+  seed: 3
+  description: real + 300 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id018
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id018
+    synthetic_limit: 300
+    real: *id001
+- name: mix_0_s4
+  seed: 4
+  description: real 60 x5 only
+  train:
+    real: *id001
+- name: mix_100_s4
+  seed: 4
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 100
+    real: *id001
+- name: mix_300_s4
+  seed: 4
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic: *id002
+    synthetic_limit: 300
+    real: *id001
+- name: loose_100_s4
+  seed: 4
+  description: real + 100 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id019
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id019
+    synthetic_limit: 100
+    real: *id001
+- name: tight_100_s4
+  seed: 4
+  description: real + 100 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id020
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id020
+    synthetic_limit: 100
+    real: *id001
+- name: loose_300_s4
+  seed: 4
+  description: real + 300 from smoke_mock_day/street_crowd_day, projected GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id021
+      - smoke_mock_day
+      - street_crowd_day
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id021
+    synthetic_limit: 300
+    real: *id001
+- name: tight_300_s4
+  seed: 4
+  description: real + 300 from the *_tightgt runs, mask GT
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id022
+      - smoke_mock_day_tightgt
+      - street_crowd_day_tightgt
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id022
+    synthetic_limit: 300
+    real: *id001

@@ -1,0 +1,24 @@
+runner: operator_queue
+seed: 45
+hypothesis: 'H45 (docs/research/66, pre-registered in 32): with H22''s operator model unchanged and one operator
+  per 40 cameras, the pooled point''s (θ 0.90) +0.069 model recall is not realised (realised recall @5 min within
+  ±0.02 of A1''s), while the conformal point (θ 0.962851) loses <= 0.03 realised recall @5 min and cuts utilisation
+  >= 20 %, under FIFO and ranked queues.'
+workers: 6
+operating_points: {A1: 0.95, pooled: 0.90, conformal: 0.962851}   # 58 §8.4; CRC = modal H42 draw
+reference: A1
+policies: [fifo, ranked]
+operator_counts: [1, 2, 3]
+operator_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+operator:   # unchanged from h22_operator_queue.yaml
+  cameras: 40
+  review_s: 30.0
+  review_cv: 0.3
+  shift_h: 8.0
+  fatigue_after_h: 2.0
+  fatigue_review_x: 1.25
+  miss: 0.05
+  miss_fatigued: 0.15
+  bulk_ack_queue: 10
+  horizons_s: [30, 300]
+primary: {pooled: pooled, conformal: conformal, horizon_s: 300, pooled_band: 0.02, conformal_max_loss: 0.03, util_cut: 0.20}

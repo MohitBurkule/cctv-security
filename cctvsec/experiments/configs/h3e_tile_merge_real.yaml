@@ -1,0 +1,42 @@
+runner: tile_merge_real
+hypothesis: >
+  H3e (sim-to-real of H3d). On MOT20-02/03/05 (frames 3..300 step 3, 100 per sequence; MOT20
+  measurement only), the tile-border rule (d) cuts the 2.0x tile arm's false positives at conf 0.25
+  by >= 50 % vs NMS 0.5 (a) while keeping recall on GT >= 20 px within 0.02 of (a). Hard negative:
+  on MOT20's dense near-field crowds tiling (d) must not beat full_1280 on recall of GT >= 80 px.
+  Pre-registered in docs/research/32 §H3e.
+seed: 0
+model: yolov8n.pt
+device: cpu              # GPU shared with editor renders
+mot_root: ~/data/mot/extracted/MOT20/train
+sequences:               # MOT20-01 excluded (frames 1-60 are h14b training frames; AUDIT_LEAKAGE)
+  MOT20-02: {first: 1, last: 300}
+  MOT20-03: {first: 1, last: 300}
+  MOT20-05: {first: 1, last: 300}
+stride: 3
+max_frames_per_seq: 100
+dets_dir: out/experiments/h3e/dets
+render_results: out/experiments/h3d/results.json
+figure: docs/research/figures/h3e_tile_merge_real.png
+min_gt_height: 20        # GT < 20 px -> ignore region
+bands: [[20, 40], [40, 80], [80, 1000000000]]
+det_conf: 0.01
+max_det: 1000            # MOT20 frames hold > 300 people
+op_conf: 0.25
+iou: 0.5
+tile: [320, 240]
+overlap: 0.2
+tile_imgsz: 640
+tile_batch: 8
+block: 30
+n_boot: 1000
+merge:                   # H3d's settings, unchanged
+  nms_iou: 0.5
+  iom: 0.6
+  wbf_iou: 0.55
+  border_margin_px: 3
+  border_iom: 0.5
+decision:
+  fp_cut_min: 0.5        # 1 - FP(d)/FP(a) >= 0.5
+  recall_max_drop: 0.02  # recall(d) - recall(a) on GT >= 20 px >= -0.02
+  hn_max_gain: 0.0       # HN: recall(d) - recall(full_1280) on GT >= 80 px <= 0

@@ -1,0 +1,44 @@
+runner: detection
+hypothesis: >
+  H1 (sim2real detection). Fine-tuning COCO-pretrained YOLOv8n on batch_v6
+  synthetic frames (raw + cctv_day_720p-degraded, split by scenario) changes
+  person AP on real MOT20; a 60-frame real slice (MOT20-01) helps more than
+  synthetic alone, and synthetic + real beats real alone.
+seed: 0
+base_model: yolov8n.pt   # repo root (gitignored; ultralytics downloads it if absent)
+batch_dir: out/batch_v6
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+eval_sets: {mot20_sub: [MOT20-01, MOT20-02], mot20_02: [MOT20-02]}
+leaky_sets: [mot20_sub]
+eval_imgsz: [640, 1280]
+# MOT20 GT is 1080p: almost no person is under 80 px tall
+height_bands: [[0, 80], [80, 120], [120, 160], [160, 240], [240, 1000000000]]
+# split by scenario: street_crowd_far_night has no degraded frames, so it is
+# left out of every arm to keep raw and degraded arms on identical scenes.
+synthetic_train_runs: [disguise_and_tamper_day, disguise_and_tamper_night, street_crowd_day,
+                       street_crowd_night, street_crowd_far_day]
+synthetic_val_runs: [smoke_mock_day, smoke_mock_night]
+val_sources: [{source: raw, stride: 20, phase: 0}, {source: degraded, stride: 20, phase: 10}]
+train: {epochs: 12, imgsz: 640, batch: 8, seed: 0, workers: 4}
+arms:
+  - name: zero_shot
+    description: COCO-pretrained yolov8n, no fine-tune
+  - name: synthetic
+    description: raw (every 8th frame) + degraded (every 8th, offset 4) synthetic
+    train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]}
+  - name: synth_plus_real10
+    description: synthetic arm + MOT20-01 frames 1-60 repeated x5
+    train:
+      synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]
+      real: {sequence: MOT20-01, frames: 60, repeat: 5}
+  - name: real10_only
+    description: MOT20-01 frames 1-60 only (x5 repeat so step count is comparable)
+    train: {real: {sequence: MOT20-01, frames: 60, repeat: 5}}
+  # seed replicates: training-seed variance, scored on the leak-free set only
+  - {name: synthetic_s1, seed: 1, eval_sets: [mot20_02], eval_imgsz: [640], train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]}}
+  - {name: synth_plus_real10_s1, seed: 1, eval_sets: [mot20_02], eval_imgsz: [640], train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}], real: {sequence: MOT20-01, frames: 60, repeat: 5}}}
+  - {name: real10_only_s1, seed: 1, eval_sets: [mot20_02], eval_imgsz: [640], train: {real: {sequence: MOT20-01, frames: 60, repeat: 5}}}
+  - {name: synthetic_s2, seed: 2, eval_sets: [mot20_02], eval_imgsz: [640], train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}]}}
+  - {name: synth_plus_real10_s2, seed: 2, eval_sets: [mot20_02], eval_imgsz: [640], train: {synthetic: [{source: raw, stride: 8, phase: 0}, {source: degraded, stride: 8, phase: 4}], real: {sequence: MOT20-01, frames: 60, repeat: 5}}}
+  - {name: real10_only_s2, seed: 2, eval_sets: [mot20_02], eval_imgsz: [640], train: {real: {sequence: MOT20-01, frames: 60, repeat: 5}}}

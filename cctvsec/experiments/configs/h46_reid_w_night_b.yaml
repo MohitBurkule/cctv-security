@@ -1,0 +1,39 @@
+runner: h46_reid_w_night_b
+hypothesis: 'H46b: extending w to {8,16,32} plus an app_only arm finds a ceiling (AssA peaks then
+  falls) at or below w=32; the w* chosen on one set (argmax dAssA) gives dAssA >= +0.02 on the
+  other, held-out set in both directions; the full 5-checkpoint night arm at the batch_v8-
+  cross-validated w* gives dAssA > 0 with CI excluding 0. Pre-registered docs/research/32 sec H46b.'
+seed: 0
+mot20_subset: $SURVSIM_MOT20_SUBSET
+mot20_sequences: [MOT20-02]
+batch_dir: out/batch_v8
+day_runs: [street_crowd_day, street_crowd_far_day, smoke_mock_day, disguise_and_tamper_day]
+night_runs: [disguise_and_tamper_night, smoke_mock_night]
+max_frame: 300
+batch_fps: 10
+imgsz: 640
+det_conf: 0.1
+det_batch: 4
+emb_min_score: 0.5
+embed_batch: 32
+ema: 0.9
+min_free_mib: 2048
+# full grid: original H46 weights (recomputed from cache, cheap) + the new arms this
+# pre-registration adds. app_only is a distinct cost mode, not a weight (see 32 sec H46b).
+base_weights: [0.25, 0.5, 1.0, 2.0, 4.0]
+new_weights: [8.0, 16.0, 32.0]
+app_only: true
+checkpoints: [mix_300_s0, mix_300_s1, mix_300_s2, mix_300_s3, mix_300_s4]
+night_checkpoints: [mix_300_s0, mix_300_s1, mix_300_s2, mix_300_s3, mix_300_s4]
+h46_night_cache: out/experiments/h46_reid_w_night
+checkpoint_specs:
+- name: mix_300_s0
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt
+- name: mix_300_s1
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/train/weights/last.pt
+- name: mix_300_s2
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/train/weights/last.pt
+- name: mix_300_s3
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s3/train/weights/last.pt
+- name: mix_300_s4
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s4/train/weights/last.pt

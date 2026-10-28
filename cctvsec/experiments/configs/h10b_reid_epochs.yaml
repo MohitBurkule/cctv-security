@@ -1,0 +1,18 @@
+runner: reid_epochs
+hypothesis: >
+  H10 v2 (ReID across appearance epochs, measurable). On
+  disguise_and_tamper_day_epochs (frames 950-1349, intruder_a changes outfit at
+  frame 1152), OSNet-ImageNet and HSV-histogram retrieval of intruder_a across
+  the outfit change (cross-epoch) is much worse than same-epoch retrieval,
+  while the simulated gait signature is unaffected.
+seed: 0
+batch_dir: out/batch_v7
+world: disguise_and_tamper
+runs: [disguise_and_tamper_day_epochs]
+min_h: 48
+min_vis: 0.6
+per_id_per_cam: 12
+fps: 10
+max_frame: 1349
+gait_noise: 0.15
+min_free_mib: 2048

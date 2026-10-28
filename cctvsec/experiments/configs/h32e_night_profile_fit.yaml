@@ -1,0 +1,35 @@
+runner: night_profile_fit
+hypothesis: >
+  H32e (night profile fit). Refit ONLY the noise scale s and the H.264 CRF of cctv_night_lowlight
+  (luma, optics, ISP, colour untouched) so median noise sigma and median 8x8 blockiness of its
+  output on the 60 night showcase frames match the 15 LLVIP-visible TUNING frames (objective:
+  minimise (log2 sigma_out/sigma_tune)^2 + (log2 blk_out/blk_tune)^2 over the stated grid).
+  Judged on the 10 LLVIP hold-out frames only. Primary: YOLOv8n recall (conf 0.25, GT >= 20 px,
+  render-derived visibility > 0, out/gt_vis_v2) under raw / shipped / fitted; decision fitted >= 0.5
+  with paired CI of fitted-shipped excluding 0, AND hard negative (13 fitted output frames with
+  sigma AND blockiness inside the hold-out p10-p90 bands >= bar). LLVIP: measure only.
+  Pre-registered in docs/research/32 §H32e.
+seed: 0
+model: yolov8n.pt
+real_root: ~/data/real_cctv_night/llvip_vis   # LLVIP, non-commercial: measure only
+tune_n: 15
+batch_dir: out/gt_vis_v2          # corrected GT (render-derived col 9); render/ is a symlink to the showcase
+run: showcase_all_night
+cams: [cam_01, cam_02, cam_ptz]
+profile: cctv_night_lowlight
+frame_start: 3
+frame_stop: 103
+stride: 5            # 20 frames per camera, 60 total (H32c/H32d frames)
+block_frames: 30     # 12 blocks
+imgsz: 1280
+conf: 0.25
+min_h: 20
+min_vis: 0.01
+n_boot: 10000
+s_grid: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]
+crf_grid: [23, 26, 29, 32, 35, 39]
+hn_frames: 13
+figure: docs/research/figures/h32e_night_fit.png
+decision:
+  recall_min: 0.5
+  hn_bar_max: 8        # bar = min(8, floor(13 * hold-out joint self-pass / 10))

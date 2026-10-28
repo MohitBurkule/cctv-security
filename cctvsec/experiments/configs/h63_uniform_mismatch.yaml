@@ -1,0 +1,18 @@
+runner: uniform_disguise
+seed: 63
+world_seed: 40
+hypothesis: 'H63 (docs/research/66, pre-registered in 32): against a uniformed_intruder (appearance role guard,
+  no roster/badge/RF, non-patrol route), corroboration mismatch (b) recovers recall@10 >= 0.8 at twin FA
+  <= 0.05/cam-h; naive appearance-role suppression (a) <= 0.1. Every sensor parameter is a declared assumption.'
+h54_config: cctvsec/experiments/configs/h54_tailgate_fusion.yaml
+kinds: [intrusion, probe, climb]
+n_recall_per_kind: 100
+n_clean: 676
+role: {p_guard_given_uniform: 0.95, p_guard_given_other: 0.02}
+badge_window_s: 15.0
+rf_radius_m: 8.0
+route: {ring_offset_m: 1.0, off_m: 5.0, off_s: 5.0, lookback_s: 30.0}
+pos_radius_m: 2.0
+tolerance_s: 10
+n_boot: 2000
+workers: 4

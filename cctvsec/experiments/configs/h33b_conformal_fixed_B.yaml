@@ -1,0 +1,12 @@
+runner: conformal_theta
+seed: 33
+hypothesis: 'H33b (docs/research/66, 32 §H33b): with B fixed before calibration (from the H12 generator,
+  not the data), conformal θ is at least as conservative as H33''s empirical-B θ on every split, held-out
+  FA/cam-h stays <= α in 10/10 splits, and the mean recall cost vs empirical B is <= 0.02.'
+alphas: [1.0, 2.0, 2.915]
+split_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+calib_frac: 0.5
+# B = Poisson(6/min * 1800 s).ppf(1 - 1e-6) arrivals / 2.0 cam-h (4 cams x 0.5 h) = 247 / 2 = 123.5 FA/cam-h.
+# Stated cap: A1 fires <= once per episode and <= once per visitor. Fixed from h12_alarm_scale.yaml only.
+fixed_B: {arrivals_per_min_max: 6.0, duration_s: 1800, min_camera_hours: 2.0, tail: 1.0e-6}
+figure: docs/research/figures/fig_h33b.png

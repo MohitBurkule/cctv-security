@@ -1,0 +1,23 @@
+runner: farfield
+hypothesis: >
+  H3 (far-field). Zero-shot YOLOv8n at the default imgsz 640 misses most
+  people under ~30 px on the batch_v6 far cameras; imgsz 1280 and SAHI-style
+  slicing recover a large part of that gap, at a measurable latency cost.
+seed: 0
+model: yolov8n.pt   # repo root (gitignored; ultralytics downloads it if absent)
+batch_dir: out/batch_v6
+sources:
+  - {source: raw, runs: [street_crowd_far_day, street_crowd_far_night]}
+  - {source: degraded, runs: [street_crowd_far_day]}
+cameras: [cam_02, cam_03]     # the far cameras: median GT height 16 / 22 px
+stride: 3
+min_gt_height: 13
+bands: [[13, 20], [20, 30], [30, 45], [45, 60], [60, 1000000000]]
+det_conf: 0.01
+op_conf: 0.25
+iou_thresholds: [0.5, 0.3]
+methods:
+  - {name: full_640, imgsz: 640}
+  - {name: full_1280, imgsz: 1280}
+  - {name: sahi_512x384, imgsz: 640, tile: [512, 384], overlap: 0.2, tile_imgsz: 640}
+  - {name: sahi_320x240, imgsz: 640, tile: [320, 240], overlap: 0.2, tile_imgsz: 640}

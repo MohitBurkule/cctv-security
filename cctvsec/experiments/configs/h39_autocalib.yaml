@@ -1,0 +1,18 @@
+runner: autocalib
+seed: 39
+hypothesis: 'H39 (docs/research/66, pre-registered in 32): known-height auto-calibration from mask-box feet/heads
+  with one mean height 1.70 m (yaw/position from the install record) reaches <= 0.5 m world RMSE within 20 m of
+  the camera on batch_v8 and degrades >= 3x beyond 30 m.'
+batch_dir: out/batch_v8
+scenes: [street_crowd_day, street_crowd_far_day, disguise_and_tamper_day, smoke_mock_day]
+min_visibility: 0.95
+min_height_px: 20
+border_px: 2
+prior_height_m: 1.70
+short_window_last_frame: 100
+distance_bins: [0, 10, 20, 30, 1000]
+n_boot: 1000
+thresholds:
+  near_rmse_m: 0.5
+  far_ratio: 3.0
+  short_vs_all: 1.5

@@ -1,0 +1,42 @@
+runner: quant_export
+mode: h43
+seed: 43
+hypothesis: 'H43 (docs/research/66, pre-registered in 32, no-Jetson branch): on 5 checkpoints (3 h14b + 2 H51
+  dose300), INT8 PTQ with Percentile calibration recovers >= 50 % of the MinMax-PTQ AP75 loss; QAT (150 its
+  fake-quant, LR/10) recovers >= 80 % and loses <= 0.005 AP on every checkpoint. ORT CPU; latency is context.'
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+eval_sets:
+  mot20_02:
+  - MOT20-02
+eval_imgsz: 640
+input_shape: [384, 640]
+checkpoints:
+  mix_300_s0: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s0.json}
+  mix_300_s1: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s1.json}
+  mix_300_s2: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s2.json}
+  dose300_s0: {pt: out/experiments/h51_equal_steps/work/dose300_s0/train/weights/last.pt, data: out/experiments/h43_qat/data/dose300_s0/data.yaml}
+  dose300_s1: {pt: out/experiments/h51_equal_steps/work/dose300_s1/train/weights/last.pt, data: out/experiments/h43_qat/data/dose300_s1/data.yaml}
+calibration:
+  percentile: 99.999
+  real:           # identical to H38 (same 100 frames)
+    dir: ~/data/mot/extracted/MOT20/train/MOT20-01/img1
+    first: 61
+    last: 429
+    n: 100
+qat:
+  iters: 150
+  lr: 1.19e-5     # H51 'optimizer=auto' -> AdamW lr 0.000119, / 10
+  weight_decay: 0.0005
+  batch: 8
+  imgsz: 640
+  workers: 2
+thresholds:
+  ptq_recovery: 0.5
+  qat_recovery: 0.8
+  qat_ap_loss: 0.005
+latency:
+  n: 20
+  warmup: 5

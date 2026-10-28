@@ -1,0 +1,10 @@
+runner: evasion
+seed: 47
+hypothesis: 'H47 (pre-registered in 32, f4a1cdf): at least 3 of 6 renderable evasion techniques reduce zero-shot
+  YOLO26n person recall by >= 0.10 vs a matched control (Holm-adjusted one-sided bootstrap p < 0.05).'
+out: out/experiments/h47_evasion
+seeds: [1, 2, 3]
+duration_s: 30
+cameras: [cam_01, cam_02]
+models: [weights/yolo26n.pt, yolov8n.pt]   # primary first
+n_boot: 2000

@@ -1,0 +1,22 @@
+runner: sensor_fusion
+seed: 53
+hypothesis: 'H53 (docs/research/66, pre-registered in 32): late fusion of the H40b arm-C line-cross alarm
+  with a gate access log, a registered RF tag and a PIDS fence-vibration sensor (drop iff (badge or tag)
+  and no PIDS) removes >= 90 % of twin FA (patrol 0.389 + maintenance 0.099 per cam-h) while recall@10
+  stays >= 0.782. Every sensor parameter is a declared assumption.'
+h40b_dir: out/experiments/h40b_line_cross
+h12_results: out/experiments/h12_alarm_scale/results.json
+base_arm: C
+sterile_tags: [restricted, perimeter_fence]
+twin_kinds: [patrol_guard, maintenance_visit]
+# ---- simulated sensors: ASSUMPTIONS, not fitted
+gate_log: {p_swipe: 0.98, jitter_s: 1.0, window_s: 15.0}
+rf: {p_carry: 0.95, tx_dbm: 0.0, advert_hz: 1.0, miss_p: 0.15, path_loss_n: 2.8, shadow_db: 4.0,
+     rssi_min_dbm: -80.0, window_s: 5.0}
+pids: {p_detect: 0.90, lead_s: [0.0, 10.0], wind_per_zone_h: 1.0, window_before_s: 30.0, window_after_s: 5.0}
+adversary: {tailgate_lead_s: [1.0, 5.0]}
+target_twin_fa: 0.488
+target_recall: 0.782
+tolerances_s: [10, 30]
+n_boot: 2000
+workers: 6

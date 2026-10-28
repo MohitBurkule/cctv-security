@@ -1,0 +1,26 @@
+runner: operator_queue
+seed: 45
+paired_extra: [conformal_capped1, conformal_fixedB]
+hypothesis: 'H45c (docs/research/32 §H33c): H45b rerun with one added point, the H33c capped certified conformal
+  θ 0.961780 (median of the 10 H33c capped1 CRC θ at α 2.915) streamed with max_alarms_per_uid_per_world = 1. Ship
+  change iff capped1 − conformal_fixedB (1 operator, @5 min) has CI > 0, or is equivalent (CI ⊂ ±0.02) at a lower
+  alarm rate; otherwise the ship rule is unchanged.'
+workers: 6
+operating_points: {A1: 0.95, pooled: 0.90, conformal: 0.962851, conformal_fixedB: 0.963436, conformal_capped1: 0.9617797303597726}   # H45b points + H33c capped certified θ
+point_caps: {conformal_capped1: 1}
+reference: A1
+policies: [fifo, ranked]
+operator_counts: [1, 2, 3]
+operator_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+operator:   # unchanged from h22_operator_queue.yaml
+  cameras: 40
+  review_s: 30.0
+  review_cv: 0.3
+  shift_h: 8.0
+  fatigue_after_h: 2.0
+  fatigue_review_x: 1.25
+  miss: 0.05
+  miss_fatigued: 0.15
+  bulk_ack_queue: 10
+  horizons_s: [30, 300]
+primary: {pooled: pooled, conformal: conformal_capped1, horizon_s: 300, pooled_band: 0.02, conformal_max_loss: 0.03, util_cut: 0.20}

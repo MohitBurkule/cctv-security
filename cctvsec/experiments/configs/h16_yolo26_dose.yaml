@@ -1,0 +1,257 @@
+runner: dose
+seed: 14
+base_model: out/experiments/weights/yolo26n.pt
+batch_dir: out/batch_v7
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands:
+- - 0
+  - 80
+- - 80
+  - 120
+- - 120
+  - 160
+- - 160
+  - 240
+- - 240
+  - 1000000000
+synthetic_train_runs:
+- disguise_and_tamper_day
+- disguise_and_tamper_night
+- street_crowd_day
+- street_crowd_night
+- street_crowd_far_day
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+eval_sets:
+  mot20_02:
+  - MOT20-02
+leaky_sets: []
+eval_imgsz:
+- 640
+primary_key: mot20_02@640
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+primary_contrasts:
+- - mix_0
+  - mix_100
+- - mix_0
+  - mix_300
+secondary_contrasts: []
+arms:
+- name: mix_0_s0
+  seed: 0
+  description: real 60 x5 only
+  train:
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_100_s0
+  seed: 0
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 100
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_300_s0
+  seed: 0
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_0_s1
+  seed: 1
+  description: real 60 x5 only
+  train:
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_100_s1
+  seed: 1
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 100
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_300_s1
+  seed: 1
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_0_s2
+  seed: 2
+  description: real 60 x5 only
+  train:
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_100_s2
+  seed: 2
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 100
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_300_s2
+  seed: 2
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_0_s3
+  seed: 3
+  description: real 60 x5 only
+  train:
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_100_s3
+  seed: 3
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 100
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_300_s3
+  seed: 3
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_0_s4
+  seed: 4
+  description: real 60 x5 only
+  train:
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_100_s4
+  seed: 4
+  description: real 60 x5 + 100 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 100
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: mix_300_s4
+  seed: 4
+  description: real 60 x5 + 300 v7 synthetic (H7 pool recipe)
+  train:
+    synthetic:
+    - source: raw
+      stride: 8
+      phase: 0
+    - source: degraded
+      stride: 8
+      phase: 4
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+hypothesis: 'H16 (re-baseline to YOLO26n). The H14 small-dose gain (+100/+300 batch_v7 synthetic frames over 60 real x5) holds with yolo26n as the base
+  model: mix_100 and mix_300 > mix_0 on MOT20-02 AP@640.'

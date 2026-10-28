@@ -1,0 +1,31 @@
+runner: uniform_disguise_tracker
+seed: 63
+world_seed: 40
+hypothesis: 'H63b (docs/research/100, pre-registered in 32): with identities from a tracker (H59 swap model
+  calibrated to H24 ByteTrack+OSNet-ImageNet w=8, 71.6 IDSW per 12-sequence set, plus H40b fragmentation),
+  the H63 corroboration-mismatch rule keyed by track id loses >= 0.05 uniformed-intruder recall@10 (body-keyed)
+  vs GT identities; sticky corroboration history loses more; a 30 s grace window recovers part of it.'
+h54_config: cctvsec/experiments/configs/h54_tailgate_fusion.yaml
+kinds: [intrusion, probe, climb]
+n_recall_per_kind: 100
+n_clean: 676
+role: {p_guard_given_uniform: 0.95, p_guard_given_other: 0.02}
+badge_window_s: 15.0
+rf_radius_m: 8.0
+pos_radius_m: 2.0
+tolerance_s: 10
+# swap hazard: H59 calibrated h (0.13203 per close-pair-s at rho = 83.4 IDSW / 1,904.6 track-s, ByteTrack)
+# rescaled to the OSNet-ImageNet arm of H24 (71.6 / 83.4). r_m as H59.
+tracker:
+  h59_h_bytetrack: 0.13202911155381533
+  idsw_bytetrack: 83.4
+  idsw_osnet: 71.6
+  r_m: 2.0
+  n_seeds: 10
+  arms: {gt: 0.0, osnet: 1.0}
+grace_s: 30.0
+n_boot: 2000
+boot_seed: 631
+min_drop: 0.05
+alpha: 0.05
+workers: 6

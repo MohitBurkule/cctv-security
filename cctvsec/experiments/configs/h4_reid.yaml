@@ -1,0 +1,24 @@
+runner: reid
+hypothesis: >
+  H4 (ReID appearance truth). A generic ImageNet OSNet re-identifies batch_v6
+  people cross-time far better than cross-camera or cross-lighting, and its
+  embedding captures the painted clothing palette (clusters purer than
+  chance) - but not better than a plain colour histogram, because on these
+  renders identity is mostly clothing colour.
+seed: 0
+batch_dir: out/batch_v6
+# run -> world key: runs sharing a world key share identities (same simulation)
+runs:
+  smoke_mock_day: smoke_mock
+  smoke_mock_night: smoke_mock
+  disguise_and_tamper_day: disguise_and_tamper
+  disguise_and_tamper_night: disguise_and_tamper
+  street_crowd_day: street_crowd
+  street_crowd_night: street_crowd
+  street_crowd_far_day: street_crowd
+  street_crowd_far_night: street_crowd
+min_h: 48
+min_vis: 0.6
+per_id_per_cam: 6
+fps: 10
+mot20_reference: $SURVSIM_MOT20_SUBSET/baselines/results_all.json

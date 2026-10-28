@@ -1,0 +1,32 @@
+runner: patrol_timing
+seed: 64
+hypothesis: 'H64 (docs/research/100 T8, pre-registered in 32): a departure-timed intruder beats a fixed PTZ tour
+  (E_fixed > 0.10); a randomised tour halves exploitation; a dwell rule calibrated to 0.5 FA/cam-h on innocent
+  commuter waits flags the timed recon w.p. > 0.5. Every rate is a declared assumption.'
+n_blocks: 10
+worlds_per_block: 500
+n_calibration: 2000
+calibration_block: 1000
+n_sweep: [1, 2, 3, 5]
+n_primary: 3
+world:
+  duration_s: 3600.0
+  horizon_s: 4200.0
+  presets: 6
+  dwell_s: 20.0
+  random_dwell_s: [10.0, 30.0]
+  slew_s: 2.0
+  arrive_s: [600.0, 2400.0]
+  cross_s: [8.0, 15.0]
+  naive_delay_s: [0.0, 60.0]
+  min_overlap_s: 2.0
+  p_det: 0.775     # H63 arm C recall@10
+  p_vis: 0.7
+hard_negative:
+  rate_per_h: 8.0
+  median_s: 240.0
+  sigma: 0.6
+  fa_per_cam_h: 0.5
+n_boot: 2000
+workers: 6
+figure: docs/research/figures/h64_patrol_timing.png

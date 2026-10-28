@@ -1,0 +1,17 @@
+runner: conformal_theta
+seed: 33
+hypothesis: 'H33c (docs/research/32 §H33c): with max_alarms_per_uid_per_world = 1 enforced in the A1 alarm stream,
+  B = 123.5 FA/cam-h is a valid a-priori bound; at α 2.915 the cap cuts held-out clean FA >= 20 % at equal θ, costs
+  <= 0.02 recall at the CRC θ (vs H33b uncapped), exceeds α in 0/10 splits and clips no calibration world.'
+alphas: [1.0, 2.0, 2.915]
+primary_alpha: 2.915
+split_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+calib_frac: 0.5
+# Same B as H33b: Poisson(180).ppf(1 - 1e-6) = 247 visitors / 2.0 cam-h = 123.5 FA/cam-h.
+fixed_B: {arrivals_per_min_max: 6.0, duration_s: 1800, min_camera_hours: 2.0, tail: 1.0e-6}
+reference_arm: uncapped
+caps:
+  uncapped: {cap: null, B_mult: 1, B_valid: false}   # = H33b crc_fixed (clipped loss only)
+  capped1: {cap: 1, B_mult: 1, B_valid: true}        # <= 1 alarm/visitor -> k <= arrivals <= 247
+  capped2: {cap: 2, B_mult: 2, B_valid: true}        # <= 2 alarms/visitor -> B = 247
+figure: docs/research/figures/fig_h33c.png

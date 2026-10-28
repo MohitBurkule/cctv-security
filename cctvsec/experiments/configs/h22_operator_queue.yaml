@@ -1,0 +1,22 @@
+runner: operator_queue
+seed: 22
+hypothesis: 'H22 (docs/research/66): at A1''s 2.9 FA/cam-h over 40 cameras, a simulated operator (30 s review,
+  fatigue after 2 h of a shift, bulk-acknowledge when the queue exceeds N) realises < 0.6 of the model recall
+  (0.825) within 5 min when alarms are reviewed FIFO.'
+workers: 6
+arms: [A1, dwell_25, twin_floor]
+policies: [fifo, ranked]
+twin_floor_fa_per_cam_h: 1.008   # 58 §7.2 kinematic-twin floor (smoke_break in gate episodes per clean cam-h)
+operator_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+operator:
+  cameras: 40
+  review_s: 30.0            # mean review time per alarm
+  review_cv: 0.3            # gamma-distributed review time
+  shift_h: 8.0
+  fatigue_after_h: 2.0      # fatigued for the rest of each 8 h shift
+  fatigue_review_x: 1.25    # fatigued reviews take 25 % longer
+  miss: 0.05                # P(operator dismisses a true alarm it reviews)
+  miss_fatigued: 0.15
+  bulk_ack_queue: 10        # queue > N -> operator bulk-acknowledges (clears) the whole queue
+  horizons_s: [30, 300]
+primary: {arm: A1, policy: fifo, horizon_s: 300, fraction: 0.6}

@@ -1,0 +1,47 @@
+runner: reid_assoc
+hypothesis: 'H24: adding appearance (OSNet-ImageNet primary; HSV; H20 synthetic OSNet) to ByteTrack
+  stage-1 association raises TrackEval AssA on batch_v8 day by >= 0.02 and does not lower it on
+  MOT20-02. Pre-registered in docs/research/32.'
+seed: 0
+mot20_subset: $SURVSIM_MOT20_SUBSET
+mot20_sequences: [MOT20-02]
+batch_dir: out/batch_v8
+batch_runs: [street_crowd_day, street_crowd_far_day, smoke_mock_day, disguise_and_tamper_day]
+max_frame: 300
+batch_fps: 10
+imgsz: 640
+det_conf: 0.1
+det_batch: 4
+emb_min_score: 0.5
+embed_batch: 32
+ema: 0.9
+min_free_mib: 2048
+h20_config: h20_reid_train
+h20_seed: 0
+gt_sigma: 0.05
+gt_box_seeds: [0, 1, 2, 3, 4]
+dense_prefix: street_crowd_day
+control: bytetrack
+arms:
+- {name: bytetrack, app_weight: 0.0}
+- {name: osnet_imagenet, embedding: osnet_imagenet, app_weight: 1.0}
+- {name: hsv_histogram, embedding: hsv, app_weight: 1.0}
+- {name: osnet_h20, embedding: osnet_h20, app_weight: 1.0}
+arm_sequences:
+  osnet_h20: {batch_v8: [disguise_and_tamper_day]}
+checkpoints:
+- name: mix_300_s0
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt
+  det_cache: {mot20: out/experiments/h17_tracking_transfer/dets/mix_300_s0}
+- name: mix_300_s1
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/train/weights/last.pt
+  det_cache: {mot20: out/experiments/h17_tracking_transfer/dets/mix_300_s1}
+- name: mix_300_s2
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/train/weights/last.pt
+  det_cache: {mot20: out/experiments/h17_tracking_transfer/dets/mix_300_s2}
+- name: mix_300_s3
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s3/train/weights/last.pt
+  det_cache: {mot20: out/experiments/h17_tracking_transfer/dets/mix_300_s3}
+- name: mix_300_s4
+  weights: out/experiments/h14b_dose_fixedlabels/work/mix_300_s4/train/weights/last.pt
+  det_cache: {mot20: out/experiments/h17_tracking_transfer/dets/mix_300_s4}

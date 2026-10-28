@@ -1,0 +1,32 @@
+runner: quant_export
+mode: h43c
+seed: 43
+hypothesis: 'H43c (docs/research/66, pre-registered in 32 and 66; root cause from H43b: the H43b int8_qat
+  arm re-quantises the QAT-fine-tuned model with plain MinMax, discarding the learned fake-quant ranges).
+  Building the ONNX QDQ graph directly from the QAT observers'' learned scale/zero-point (onnxruntime
+  quantize_static with per-tensor `TensorQuantOverrides`, no fresh MinMax pass) recovers >= 80 % of the
+  int8_minmax AP75 loss and keeps AP loss <= 0.005 on every checkpoint (secondary: >= 50 % on AP75).
+  No re-fine-tuning; reuses the cached H43b QAT checkpoints. CPU only, GPU free for this run.'
+h43_out: out/experiments/h43_qat
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+eval_sets:
+  mot20_02:
+  - MOT20-02
+eval_imgsz: 640
+input_shape: [384, 640]
+checkpoints:
+  mix_300_s0: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s0/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s0.json}
+  mix_300_s1: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s1/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s1.json}
+  mix_300_s2: {pt: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/train/weights/last.pt, data: out/experiments/h14b_dose_fixedlabels/work/mix_300_s2/yolo_data/data.yaml,
+               reuse_h38: out/experiments/h38_quant_export/ckpts/mix_300_s2.json}
+  dose300_s0: {pt: out/experiments/h51_equal_steps/work/dose300_s0/train/weights/last.pt, data: out/experiments/h43_qat/data/dose300_s0/data.yaml}
+  dose300_s1: {pt: out/experiments/h51_equal_steps/work/dose300_s1/train/weights/last.pt, data: out/experiments/h43_qat/data/dose300_s1/data.yaml}
+thresholds:
+  qdq_recovery: 0.8
+  qdq_recovery_secondary: 0.5
+  qdq_ap_loss: 0.005
+latency:
+  n: 20
+  warmup: 5

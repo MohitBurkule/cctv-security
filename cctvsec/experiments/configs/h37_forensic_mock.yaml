@@ -1,0 +1,18 @@
+# H37 (docs/research/66/72 §3, AUDIT_72, 32 §H37): mock-only slice. Pre-registered
+# 2026-09-27 before results existed. CLIP arms (C/D) are out of scope -- they need
+# renders; this is the PAR-attribute mock-backend arm (A vs B) only.
+runner: forensic_search
+hypothesis: >-
+  On seeded mock worlds with GT appearance epochs, uid-level recall@10 for
+  attribute+time+place queries is >= 0.15 lower when PAR attributes are pooled
+  per track than per epoch-segmented track (72 §3.2 H37, restricted to the
+  mock/PAR arms A and B). Reported with simulated attribute noise (10% flips)
+  to show sensitivity of the gap.
+seed: 37
+n_worlds: 50
+n_identities: 40          # >= 10 per world; larger so top-10 truncation is load-bearing (6 colour x garment combos)
+duration_s: 3600
+changer_frac: 0.35        # >= 30% of identities get a clothing change
+n_queries_per_world: 30   # 1500 queries total
+boundary_frac: 0.30       # >= 30% of queries have an epoch boundary inside the window
+noise_levels: [0.0, 0.10] # PAR attribute-flip rate, two levels per AUDIT_72's confound field

@@ -1,0 +1,22 @@
+runner: realism_transfer
+hypothesis: >
+  H13 (exploratory; does the realism band predict transfer?). Across >= 20
+  distinct synthetic training sources (batch x run x raw|degraded from
+  batch_v5/v6/v7), a smaller docs/15 image-statistics distance to MOT20-02
+  (mean |z| over 13 frame stats) goes with higher real MOT20-02 AP@640 after a
+  short fine-tune: Spearman rho < 0.
+seed: 13
+batches: [out/batch_v5, out/batch_v6, out/batch_v7]
+exclude_run_substrings: [_failed, _tightgt]
+max_sources: 20
+train_frames: 300
+stats_frames: 40
+reference: MOT20-02
+base_model: yolov8n.pt
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands: [[0, 80], [80, 120], [120, 160], [160, 240], [240, 1000000000]]
+train: {epochs: 4, imgsz: 640, batch: 8, seed: 0, workers: 2}
+eval_sets: {mot20_02: [MOT20-02]}
+eval_imgsz: [640]
+min_free_mib: 2048

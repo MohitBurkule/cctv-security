@@ -1,0 +1,48 @@
+runner: tile_merge
+hypothesis: >
+  H3d (tile merge, CC0). Keeping H3c's 2.0x arm (full frame at 640 + 320x240 tiles, 20 % overlap,
+  tiles at imgsz 640), some merge strategy among (b) NMS + intersection-over-min, (c) weighted boxes
+  fusion, (d) tile-border rule, (e) tiles only on the calibration range-gated far ROI keeps far
+  recall on >= 20 px rows >= 0.65 while cutting near-camera false positives at conf 0.25 to <= 2x
+  full_1280's, with near AP50 at most 0.02 below full_1280. All strategies scored offline on the
+  same cached detections. Hard negative: (e) must not raise near-camera recall on 13-40 px rows
+  over the full-frame-640 pass. Pre-registered in docs/research/32 §H3d.
+seed: 0
+model: yolov8n.pt
+device: cpu              # GPU shared with editor renders; cache once, fp32 on CPU
+batch_dir: out/batch_v8
+dets_dir: out/experiments/h3d/dets
+figure: docs/research/figures/h3d_tile_merge.png
+sources:
+  - {source: raw, runs: [street_crowd_far_day, street_crowd_far_night]}
+  - {source: degraded, runs: [street_crowd_far_day]}
+groups: {far: [cam_02, cam_03], near: [cam_01]}
+stride: 3
+max_frames_per_stream: null
+min_gt_height: 13
+bands: [[13, 20], [20, 40], [40, 80], [80, 1000000000]]
+primary_min_px: 20
+hn_small_max_px: 40
+det_conf: 0.01
+op_conf: 0.25
+iou: 0.5
+tile: [320, 240]
+overlap: 0.2
+tile_imgsz: 640
+block: 30
+n_boot: 1000
+merge:
+  nms_iou: 0.5
+  iom: 0.6               # (b) also suppress when intersection / smaller area > 0.6
+  wbf_iou: 0.55          # (c) cluster IoU; fused box = score-weighted mean, score = max
+  border_margin_px: 3    # (d) a tile box within 3 px of an inner tile edge "touches" it
+  border_iom: 0.5        # (d) ...and is dropped if a full-frame box has IoM >= 0.5 with it
+  person_m: 1.7          # (e) tile kept iff it covers a row where a 1.7 m person is 0 < h < 64 px
+  roi_gate_px: 64
+decision:
+  far_min: 0.65
+  near_fp_factor: 2.0    # near FP <= 2 x full_1280 FP on the same cache
+  ap50_max_drop: 0.02
+  h3c_far_ge20: 0.681    # sanity: (a) on this cache within 0.03 of H3c
+  h3c_tolerance: 0.03
+  hn_e_max_gain: 0.0

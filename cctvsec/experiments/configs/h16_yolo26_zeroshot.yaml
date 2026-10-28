@@ -1,0 +1,19 @@
+runner: rebaseline
+hypothesis: >
+  H16 (re-baseline, zero-shot). YOLO26n (COCO) vs YOLOv8n (COCO), no fine-tuning: MOT20 subset
+  (MOT20-01+02, first 300 frames) AP/AP50 at imgsz 640 and 1280, and batch_v7 recall by GT height.
+  Descriptive re-baseline; the only test is the paired per-sequence recall difference on batch_v7.
+seed: 16
+batch_dir: out/batch_v7
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+eval_sets:
+  mot20_sub: [MOT20-01, MOT20-02]
+eval_imgsz: [640, 1280]
+height_bands: [[0, 20], [20, 40], [40, 80], [80, 160], [160, 1000000000]]
+recall_runs: [disguise_and_tamper_day, disguise_and_tamper_night, smoke_mock_day, smoke_mock_night,
+              street_crowd_day, street_crowd_night, street_crowd_far_day, street_crowd_far_night]
+stride: 10
+models:
+  yolov8n: yolov8n.pt
+  yolo26n: out/experiments/weights/yolo26n.pt
+contrast: [yolov8n, yolo26n]

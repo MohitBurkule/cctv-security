@@ -1,0 +1,110 @@
+runner: farreal
+hypothesis: 'H18 (far-field v2, H8 replicated with fixes): 300 batch_v8 far frames
+  (day+night, visible mask labels, correct heights) mixed with 60 real frames vs real-only,
+  on MOT20-02 people <60 px after downscaling, full-frame at imgsz 640/1280 and zero-shot
+  with 320x240 tiling. Pre-registered in docs/research/32.'
+seed: 0
+base_model: yolov8n.pt
+batch_dir: out/batch_v8
+mot20_root: ~/data/mot/extracted/MOT20
+synthetic_train_runs:
+- street_crowd_far_day
+- street_crowd_far_night
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+eval_sequence: MOT20-02
+eval_frames: 300
+eval_stride: 5
+scales:
+- 0.25
+- 0.33
+max_h: 60
+bands:
+- - 0
+  - 30
+- - 30
+  - 45
+- - 45
+  - 60
+det_conf: 0.01
+op_conf: 0.25
+methods:
+- name: full_640
+  imgsz: 640
+- name: full_1280
+  imgsz: 1280
+- name: sahi_320x240
+  imgsz: native
+  tile:
+  - 320
+  - 240
+  overlap: 0.2
+  tile_imgsz: 640
+seeds:
+- 0
+- 1
+- 2
+contrasts:
+- - real_only
+  - far_mix
+- - zero_shot
+  - far_mix
+primary_scale: 0.25
+arms:
+- name: zero_shot
+  description: COCO yolov8n
+- name: real_only_s0
+  seed: 0
+  description: H14 mix_0 weights (60 real MOT20-01 x5, 6 ep, 640)
+  weights: out/experiments/h14_dose/work/mix_0_s0/train/weights/last.pt
+- name: far_mix_s0
+  seed: 0
+  description: 60 real MOT20-01 x5 + 300 batch_v8 street_crowd_far day+night (visible
+    labels), 6 ep, 640
+  train:
+    synthetic: &id001
+    - source: raw
+      stride: 4
+      phase: 0
+    - source: degraded
+      stride: 4
+      phase: 2
+    synthetic_limit: 300
+    real: &id002
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: real_only_s1
+  seed: 1
+  description: H14 mix_0 weights (60 real MOT20-01 x5, 6 ep, 640)
+  weights: out/experiments/h14_dose/work/mix_0_s1/train/weights/last.pt
+- name: far_mix_s1
+  seed: 1
+  description: 60 real MOT20-01 x5 + 300 batch_v8 street_crowd_far day+night (visible
+    labels), 6 ep, 640
+  train:
+    synthetic: *id001
+    synthetic_limit: 300
+    real: *id002
+- name: real_only_s2
+  seed: 2
+  description: H14 mix_0 weights (60 real MOT20-01 x5, 6 ep, 640)
+  weights: out/experiments/h14_dose/work/mix_0_s2/train/weights/last.pt
+- name: far_mix_s2
+  seed: 2
+  description: 60 real MOT20-01 x5 + 300 batch_v8 street_crowd_far day+night (visible
+    labels), 6 ep, 640
+  train:
+    synthetic: *id001
+    synthetic_limit: 300
+    real: *id002

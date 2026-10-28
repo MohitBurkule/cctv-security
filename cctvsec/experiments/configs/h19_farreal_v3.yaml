@@ -1,0 +1,195 @@
+runner: farreal
+seed: 0
+base_model: yolov8n.pt
+batch_dir: out/batch_v8
+mot20_root: ~/data/mot/extracted/MOT20
+synthetic_train_runs:
+- street_crowd_far_day
+- street_crowd_far_night
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+eval_sequence: MOT20-02
+eval_frames: 300
+eval_stride: 5
+scales:
+- 0.25
+- 0.33
+max_h: 60
+bands:
+- - 0
+  - 30
+- - 30
+  - 45
+- - 45
+  - 60
+det_conf: 0.01
+op_conf: 0.25
+methods:
+- name: full_native
+  imgsz: native
+- name: full_640
+  imgsz: 640
+- name: full_1280
+  imgsz: 1280
+- name: sahi_320x240
+  imgsz: native
+  tile:
+  - 320
+  - 240
+  overlap: 0.2
+  tile_imgsz: 640
+seeds:
+- 0
+- 1
+- 2
+primary_scale: 0.25
+hypothesis: 'H19 (close H18''s gap): synthetic-only far fine-tuning at imgsz 1280
+  on batch_v8 far sets (tight visible labels, correct heights) vs the H8 recipe on
+  batch_v6 far sets, plus the H18 real+far mix at 1280; 3 seeds; MOT20-02 people <60
+  px after downscaling. Pre-registered in docs/research/32.'
+arms:
+- name: zero_shot
+  description: COCO yolov8n
+- name: v6_syn_s0
+  seed: 0
+  description: 'H8 far_ft recipe replicated: batch_v6 far cam_02/03, raw+degraded
+    stride 3, 8 ep, 1280, batch 2'
+  train: &id004
+    synthetic:
+    - source: raw
+      stride: 3
+      phase: 0
+      cameras: &id001
+      - cam_02
+      - cam_03
+      batch_dir: out/batch_v6
+    - source: degraded
+      stride: 3
+      phase: 1
+      cameras: &id002
+      - cam_02
+      - cam_03
+      batch_dir: out/batch_v6
+  train_opts: &id003
+    epochs: 8
+    imgsz: 1280
+    batch: 2
+- name: v8_syn_s0
+  seed: 0
+  description: same recipe on batch_v8 far sets (tight visible labels, correct heights)
+  train: &id005
+    synthetic:
+    - source: raw
+      stride: 3
+      phase: 0
+      cameras: *id001
+    - source: degraded
+      stride: 3
+      phase: 1
+      cameras: *id002
+  train_opts: *id003
+- name: v8_mix1280_s0
+  seed: 0
+  description: H18 far_mix recipe (60 real MOT20-01 x5 + 300 batch_v8 far) at imgsz
+    1280, batch 2, 6 ep
+  train: &id006
+    synthetic:
+    - source: raw
+      stride: 4
+      phase: 0
+    - source: degraded
+      stride: 4
+      phase: 2
+    synthetic_limit: 300
+    real:
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+  train_opts:
+    imgsz: 1280
+    batch: 2
+- name: v8_mix640_s0
+  seed: 0
+  description: H18 far_mix weights (640), re-scored
+  weights: out/experiments/h18_farreal_v2/work/far_mix_s0/train/weights/last.pt
+- name: real_only_s0
+  seed: 0
+  description: H14 mix_0 weights (60 real, 640), re-scored
+  weights: out/experiments/h14_dose/work/mix_0_s0/train/weights/last.pt
+- name: v6_syn_s1
+  seed: 1
+  description: 'H8 far_ft recipe replicated: batch_v6 far cam_02/03, raw+degraded
+    stride 3, 8 ep, 1280, batch 2'
+  train: *id004
+  train_opts: *id003
+- name: v8_syn_s1
+  seed: 1
+  description: same recipe on batch_v8 far sets (tight visible labels, correct heights)
+  train: *id005
+  train_opts: *id003
+- name: v8_mix1280_s1
+  seed: 1
+  description: H18 far_mix recipe (60 real MOT20-01 x5 + 300 batch_v8 far) at imgsz
+    1280, batch 2, 6 ep
+  train: *id006
+  train_opts:
+    imgsz: 1280
+    batch: 2
+- name: v8_mix640_s1
+  seed: 1
+  description: H18 far_mix weights (640), re-scored
+  weights: out/experiments/h18_farreal_v2/work/far_mix_s1/train/weights/last.pt
+- name: real_only_s1
+  seed: 1
+  description: H14 mix_0 weights (60 real, 640), re-scored
+  weights: out/experiments/h14_dose/work/mix_0_s1/train/weights/last.pt
+- name: v6_syn_s2
+  seed: 2
+  description: 'H8 far_ft recipe replicated: batch_v6 far cam_02/03, raw+degraded
+    stride 3, 8 ep, 1280, batch 2'
+  train: *id004
+  train_opts: *id003
+- name: v8_syn_s2
+  seed: 2
+  description: same recipe on batch_v8 far sets (tight visible labels, correct heights)
+  train: *id005
+  train_opts: *id003
+- name: v8_mix1280_s2
+  seed: 2
+  description: H18 far_mix recipe (60 real MOT20-01 x5 + 300 batch_v8 far) at imgsz
+    1280, batch 2, 6 ep
+  train: *id006
+  train_opts:
+    imgsz: 1280
+    batch: 2
+- name: v8_mix640_s2
+  seed: 2
+  description: H18 far_mix weights (640), re-scored
+  weights: out/experiments/h18_farreal_v2/work/far_mix_s2/train/weights/last.pt
+- name: real_only_s2
+  seed: 2
+  description: H14 mix_0 weights (60 real, 640), re-scored
+  weights: out/experiments/h14_dose/work/mix_0_s2/train/weights/last.pt
+contrasts:
+- - v6_syn
+  - v8_syn
+- - v8_syn
+  - v8_mix1280
+- - zero_shot
+  - v8_syn
+- - zero_shot
+  - v6_syn
+- - real_only
+  - v8_mix1280
+- - v8_mix640
+  - v8_mix1280

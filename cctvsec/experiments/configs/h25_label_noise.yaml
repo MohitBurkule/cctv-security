@@ -1,0 +1,335 @@
+runner: label_noise
+seed: 25
+base_model: yolov8n.pt
+batch_dir: out/batch_v7
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands:
+- - 0
+  - 80
+- - 80
+  - 120
+- - 120
+  - 160
+- - 160
+  - 240
+- - 240
+  - 1000000000
+synthetic_train_runs:
+- disguise_and_tamper_day
+- disguise_and_tamper_night
+- street_crowd_day
+- street_crowd_night
+- street_crowd_far_day
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+eval_sets:
+  mot20_02:
+  - MOT20-02
+leaky_sets: []
+eval_imgsz:
+- 640
+primary_key: mot20_02@640
+hypothesis: 'H25 (docs/research/66, reduced design): injecting box jitter sigma (fraction of box size) and dropped boxes into the 100 batch_v8 synthetic frames of the 60 real + 100 synthetic mix reduces
+  the dose gain over real-only by >= 50 % only at sigma >= 10 %.'
+seeds:
+- 0
+- 1
+- 2
+jitter_sigmas:
+- 0.0
+- 0.02
+- 0.05
+- 0.1
+drops:
+- 0.0
+- 0.1
+min_clean_gain: 0.002
+arms:
+- name: real_only_s0
+  seed: 0
+  description: real 60 x5 only
+  train:
+    real: &id002
+      sequence: MOT20-01
+      frames: 60
+      repeat: 5
+- name: j00_d00_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.0, drop 0.0
+  train:
+    synthetic: &id003
+    - source: raw
+      stride: 8
+      phase: 0
+      runs: &id001
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      batch_dir: out/batch_v8
+    - source: degraded
+      stride: 8
+      phase: 4
+      runs: *id001
+      batch_dir: out/batch_v8
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.0
+      drop: 0.0
+    real: *id002
+- name: j00_d10_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.0, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.0
+      drop: 0.1
+    real: *id002
+- name: j02_d00_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.02, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.02
+      drop: 0.0
+    real: *id002
+- name: j02_d10_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.02, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.02
+      drop: 0.1
+    real: *id002
+- name: j05_d00_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.05, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.05
+      drop: 0.0
+    real: *id002
+- name: j05_d10_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.05, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.05
+      drop: 0.1
+    real: *id002
+- name: j10_d00_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.1, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.1
+      drop: 0.0
+    real: *id002
+- name: j10_d10_s0
+  seed: 0
+  description: real 60x5 + 100 v8 vis, jitter 0.1, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.1
+      drop: 0.1
+    real: *id002
+- name: real_only_s1
+  seed: 1
+  description: real 60 x5 only
+  train:
+    real: *id002
+- name: j00_d00_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.0, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.0
+      drop: 0.0
+    real: *id002
+- name: j00_d10_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.0, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.0
+      drop: 0.1
+    real: *id002
+- name: j02_d00_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.02, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.02
+      drop: 0.0
+    real: *id002
+- name: j02_d10_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.02, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.02
+      drop: 0.1
+    real: *id002
+- name: j05_d00_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.05, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.05
+      drop: 0.0
+    real: *id002
+- name: j05_d10_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.05, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.05
+      drop: 0.1
+    real: *id002
+- name: j10_d00_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.1, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.1
+      drop: 0.0
+    real: *id002
+- name: j10_d10_s1
+  seed: 1
+  description: real 60x5 + 100 v8 vis, jitter 0.1, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.1
+      drop: 0.1
+    real: *id002
+- name: real_only_s2
+  seed: 2
+  description: real 60 x5 only
+  train:
+    real: *id002
+- name: j00_d00_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.0, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.0
+      drop: 0.0
+    real: *id002
+- name: j00_d10_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.0, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.0
+      drop: 0.1
+    real: *id002
+- name: j02_d00_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.02, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.02
+      drop: 0.0
+    real: *id002
+- name: j02_d10_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.02, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.02
+      drop: 0.1
+    real: *id002
+- name: j05_d00_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.05, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.05
+      drop: 0.0
+    real: *id002
+- name: j05_d10_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.05, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.05
+      drop: 0.1
+    real: *id002
+- name: j10_d00_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.1, drop 0.0
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.1
+      drop: 0.0
+    real: *id002
+- name: j10_d10_s2
+  seed: 2
+  description: real 60x5 + 100 v8 vis, jitter 0.1, drop 0.1
+  train:
+    synthetic: *id003
+    synthetic_limit: 100
+    label_noise:
+      jitter_sigma: 0.1
+      drop: 0.1
+    real: *id002

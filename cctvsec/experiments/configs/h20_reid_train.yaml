@@ -1,0 +1,29 @@
+runner: reid_train
+hypothesis: >
+  H20 (can synthetic data train a ReID embedding?). Fine-tuning OSNet x1.0
+  (ImageNet init) on batch_v8 GT crops of 16 identities (street_crowd, smoke_mock)
+  with CE + triplet improves held-out synthetic ReID (disguise_and_tamper) but
+  not real MOT20 cross-time ReID, relative to OSNet-ImageNet. Pre-registered in
+  docs/research/32.
+seed: 0
+batch_dir: out/batch_v8
+mot20_subset: $SURVSIM_MOT20_SUBSET
+train_runs:
+  street_crowd_day: street_crowd
+  street_crowd_night: street_crowd
+  street_crowd_far_day: street_crowd
+  street_crowd_far_night: street_crowd
+  smoke_mock_day: smoke_mock
+  smoke_mock_night: smoke_mock
+test_runs:
+  disguise_and_tamper_day: disguise_and_tamper
+  disguise_and_tamper_night: disguise_and_tamper
+  disguise_and_tamper_day_epochs: disguise_and_tamper_epochs
+train_per_id_per_cam: 40
+test_per_id_per_cam: 12
+min_h: 48
+min_vis: 0.6
+fps: 10
+seeds: [0, 1, 2]
+min_free_mib: 2048
+train: {epochs: 12, P: 8, K: 4, lr: 0.0003, margin: 0.3, max_seconds: 300}

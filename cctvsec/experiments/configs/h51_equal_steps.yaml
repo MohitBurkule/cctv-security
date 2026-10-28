@@ -1,0 +1,927 @@
+runner: dose_fixedstep
+seed: 51
+base_model: yolov8n.pt
+batch_dir: out/batch_v7
+mot20_root: ~/data/mot/extracted/MOT20
+mot20_manifest: $SURVSIM_MOT20_SUBSET/manifest.json
+height_bands:
+- - 0
+  - 80
+- - 80
+  - 120
+- - 120
+  - 160
+- - 160
+  - 240
+- - 240
+  - 1000000000
+synthetic_train_runs:
+- disguise_and_tamper_day
+- disguise_and_tamper_night
+- street_crowd_day
+- street_crowd_night
+- street_crowd_far_day
+synthetic_val_runs:
+- smoke_mock_night
+val_sources:
+- source: raw
+  stride: 20
+  phase: 0
+train:
+  epochs: 6
+  imgsz: 640
+  batch: 8
+  seed: 0
+  workers: 2
+  close_mosaic: 0
+eval_sets:
+  mot20_02:
+  - MOT20-02
+leaky_sets: []
+eval_imgsz:
+- 640
+primary_key: mot20_02@640
+hypothesis: 'H51 (docs/research/66, 32): at identical optimiser steps (450), warm-up
+  (225 its), close_mosaic 0, batch 8 and H26 list construction, 10 seeds, real+100
+  and real+300 batch_v8 each beat real-only by >= +0.004 MOT20-02 AP@640 with Holm-adjusted
+  paired sign-flip p < 0.05. Diagnostic: real+100 batch_v7 (h14b pool) at the same
+  recipe, seeds 0-4, vs dose100 paired.'
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+doses:
+- 0
+- 100
+- 300
+fixed_steps:
+  presentations: 3600
+  warmup_iters: 225
+  batch: 8
+primary_contrasts:
+- - dose0
+  - dose100
+- - dose0
+  - dose300
+secondary_contrasts:
+- - dose100
+  - v7dose100
+arms:
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s0
+  seed: 0
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s0
+  seed: 0
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id001
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id001
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s0
+  seed: 0
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id002
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id002
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s1
+  seed: 1
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s1
+  seed: 1
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id003
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id003
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s1
+  seed: 1
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id004
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id004
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s2
+  seed: 2
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s2
+  seed: 2
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id005
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id005
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s2
+  seed: 2
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id006
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id006
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s3
+  seed: 3
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s3
+  seed: 3
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id007
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id007
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s3
+  seed: 3
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id008
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id008
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s4
+  seed: 4
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s4
+  seed: 4
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id009
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id009
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s4
+  seed: 4
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id010
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id010
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s5
+  seed: 5
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s5
+  seed: 5
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id011
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id011
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s5
+  seed: 5
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id012
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id012
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s6
+  seed: 6
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s6
+  seed: 6
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id013
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id013
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s6
+  seed: 6
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id014
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id014
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s7
+  seed: 7
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s7
+  seed: 7
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id015
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id015
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s7
+  seed: 7
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id016
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id016
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s8
+  seed: 8
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s8
+  seed: 8
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id017
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id017
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s8
+  seed: 8
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id018
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id018
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- description: real 60x5 + 0 v8 vis, 12 ep x 300 imgs = 450 steps
+  name: dose0_s9
+  seed: 9
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+  train_opts:
+    epochs: 12
+    warmup_epochs: 6.0
+- description: real 60x5 + 100 v8 vis, 9 ep x 400 imgs = 450 steps
+  name: dose100_s9
+  seed: 9
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id019
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id019
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- description: real 60x5 + 300 v8 vis, 6 ep x 600 imgs = 450 steps
+  name: dose300_s9
+  seed: 9
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - batch_dir: out/batch_v8
+      phase: 0
+      runs: &id020
+      - disguise_and_tamper_day
+      - disguise_and_tamper_day_epochs
+      - disguise_and_tamper_night
+      - smoke_mock_day
+      - smoke_mock_night
+      - street_crowd_day
+      - street_crowd_far_day
+      - street_crowd_far_night
+      - street_crowd_night
+      source: raw
+      stride: 8
+    - batch_dir: out/batch_v8
+      phase: 4
+      runs: *id020
+      source: degraded
+      stride: 8
+    synthetic_limit: 300
+  train_opts:
+    epochs: 6
+    warmup_epochs: 3.0
+- name: v7dose100_s0
+  seed: 0
+  description: 'real 60x5 + 100 v7 (h14b pool: batch_v7 5 sets, raw s8 p0 + degraded
+    s8 p4), 9 ep x 400 imgs = 450 steps'
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - phase: 0
+      source: raw
+      stride: 8
+    - phase: 4
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: v7dose100_s1
+  seed: 1
+  description: 'real 60x5 + 100 v7 (h14b pool: batch_v7 5 sets, raw s8 p0 + degraded
+    s8 p4), 9 ep x 400 imgs = 450 steps'
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - phase: 0
+      source: raw
+      stride: 8
+    - phase: 4
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: v7dose100_s2
+  seed: 2
+  description: 'real 60x5 + 100 v7 (h14b pool: batch_v7 5 sets, raw s8 p0 + degraded
+    s8 p4), 9 ep x 400 imgs = 450 steps'
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - phase: 0
+      source: raw
+      stride: 8
+    - phase: 4
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: v7dose100_s3
+  seed: 3
+  description: 'real 60x5 + 100 v7 (h14b pool: batch_v7 5 sets, raw s8 p0 + degraded
+    s8 p4), 9 ep x 400 imgs = 450 steps'
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - phase: 0
+      source: raw
+      stride: 8
+    - phase: 4
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+- name: v7dose100_s4
+  seed: 4
+  description: 'real 60x5 + 100 v7 (h14b pool: batch_v7 5 sets, raw s8 p0 + degraded
+    s8 p4), 9 ep x 400 imgs = 450 steps'
+  train:
+    real:
+      frames: 60
+      repeat: 5
+      sequence: MOT20-01
+    synthetic:
+    - phase: 0
+      source: raw
+      stride: 8
+    - phase: 4
+      source: degraded
+      stride: 8
+    synthetic_limit: 100
+  train_opts:
+    epochs: 9
+    warmup_epochs: 4.5
+paired_primary: true
